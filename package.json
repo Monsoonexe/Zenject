@@ -1,0 +1,8 @@
+  
+{
+	"name": "com.SmolderSoft.Zenject",
+	"displayName": "Zenject",
+	"version": "9.2.11",
+	"description": "Dependency Injection Framework for Unity3D",
+	"dependencies": {}
+}

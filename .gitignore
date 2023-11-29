@@ -18,3 +18,23 @@ project_root_marker
 
 # Added by Mathijs:
 .DS_Store
+
+/Temp
+/Library
+/Build
+/Builds
+/obj
+/Logs
+
+/.vs
+
+#ignoring pidb, they are just code completion caching data according to:
+# http://stackoverflow.com/questions/1022111/what-are-monodevelops-pidb-files
+*.pidb
+
+*.userprefs
+
+/*.user
+/*.csproj
+/*.sln
+/*.idea

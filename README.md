@@ -1,15 +1,11 @@
-![Extenject Header Image](Documentation/Images/ExtenjectMainHeader.png)
+This is a fork of Extenject maintained by me, ya boi Richie Business. Deal with it, sucka!!!
+This is just the contents of the Unity project with some optional extras. If you want that other good stuff, you're gonna have to go to the source of the madness.
 
-[![Gitter](https://img.shields.io/static/v1?label=Gitter&labelColor=ED1965&message=Support&color=grey&logo=Gitter&logoColor=White&url=https://gitter.im/Extenject/community)](https://gitter.im/Extenject/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Mathijs-Bakker/Extenject?color=green)](https://github.com/Mathijs-Bakker/Extenject/releases)
-![GitHub contributors](https://img.shields.io/github/contributors/Mathijs-Bakker/Extenject)
-![GitHub last commit](https://img.shields.io/github/last-commit/Mathijs-Bakker/Extenject)
-[![CI](https://github.com/Mathijs-Bakker/Extenject/actions/workflows/main.yml/badge.svg)](https://github.com/Mathijs-Bakker/Extenject/actions/workflows/main.yml)
-![GitHub](https://img.shields.io/github/license/Mathijs-Bakker/Extenject)
+![Extenject Header Image](Documentation/Images/ExtenjectMainHeader.png)
 
 # Extenject: extensions, bug fixes and updates for Zenject 
 
-This project is a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
+This project is simply a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
 
 ## Table Of Contents
 
@@ -129,7 +125,7 @@ This project is open source.
 
 For general troubleshooting / support, please post to [stack overflow](https://stackoverflow.com/questions/ask) using the tag 'zenject', or post in the [zenject google group](https://groups.google.com/forum/#!forum/zenject/)
 
-Or, if you have found a bug, you are also welcome to create an issue on the [github page](https://github.com/Mathijs-Bakker/Extenject), or a pull request if you have a fix / extension.  There is also a [gitter chat](https://gitter.im/Extenject/community) that you can join for real time discussion.
+Or, if you have found a bug, you are also welcome to create an issue on the [github page](https://github.com/Mathijs-Bakker/Extenject), or a pull request if you have a fix / extension.  There is also a [gitter chat](https://gitter.im/Extenject/community) that you can join for real time discussion.  Finally, you can also email me directly at sfvermeulen@gmail.com or follow me on twitter at [@steve_verm](https://twitter.com/steve_verm)
 
 ## Features
 
@@ -184,19 +180,12 @@ You can install Zenject using any of the following methods
     * This option is a [feature request](https://github.com/svermeulen/Extenject/issues/24). The package will be released when Unity is ready. Unity is not giving any insights on the development status. But the expectation is in the first or second release of 2020.
     * If you can not wait. There is an alternative. But you will need the Unity extension found [here](https://github.com/mob-sakai/UpmGitExtension). And the package found [here](https://github.com/starikcetin/Extenject/tree/upm).
 
-1.  __Unity Package Manager__
-
-    * Use `UnityProject/Assets/Plugins/Zenject/Source/package.json`
-        * Window -> Package Manager
-        * Select `Add package from git URL...`
-        * Use `https://github.com/<organization>/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#<tag>`
-
 1.  __From Source__
 
     * After syncing the git repo, note that you will have to build the `Zenject-Usage.dll` by building the solution at `AssemblyBuild\Zenject-usage\Zenject-usage.sln`.  Or, if you prefer you can get `Zenject-Usage.dll` from Releases section instead
     * Then you can copy the `UnityProject/Assets/Plugins/Zenject` directory to your own Unity3D project.
 
-Note that when importing Zenject into your unity project, you can uncheck any folder underneath the "Samples" or the "Tests" for cases where you don't want to include it, or if you just want the core zenject functionality, you can uncheck the entire "Samples" and "Tests" directory.
+Note that when importing Zenject into your unity project, you can uncheck any folder underneath the OptionalExtras folder for cases where you don't want to include it, or if you just want the core zenject functionality, you can uncheck the entire OptionalExtras directory.
 
 ## History
 
@@ -212,11 +201,11 @@ The Zenject documentation is split up into the following sections.  It is split 
 
 Another great starting point is to watch [this youtube series on zenject](https://www.youtube.com/watch?v=IS2YUIb_w_M&list=PLKERDLXpXl_jNJPY2czQcfPXW4BJaGZc_) created by Infallible Code.
 
-You might also benefit from playing with the provided sample projects (which you can find by opening `Zenject/Samples/SampleGame1` or `Zenject/Samples/SampleGame2`).
+You might also benefit from playing with the provided sample projects (which you can find by opening `Zenject/OptionalExtras/SampleGame1` or `Zenject/OptionalExtras/SampleGame2`).
 
 If you are a DI veteran, then it might be worth taking a look at the [cheatsheet](#cheat-sheet) at the bottom of this page, which should give you an idea of the syntax, which might be all you need to get started.
 
-The tests may also be helpful to show usage for each specific feature (which you can find at `Zenject/Tests/UnitTests` and `Zenject/Tests/IntegrationTests`)
+The tests may also be helpful to show usage for each specific feature (which you can find at `Zenject/OptionalExtras/UnitTests` and `Zenject/OptionalExtras/IntegrationTests`)
 
 Also see [further reading section](#further-reading) for some external zenject tutorials provided elsewhere.
 
@@ -1091,7 +1080,7 @@ There are three ways to do this.
 
 1. **Prefabs within Resources folder**.  You can also place your installer prefabs underneath a Resoures folder and install them directly from code by using the Resources path.  For details on usage see [here](#runtime-parameters-for-installers).
 
-Another option in addition to `MonoInstaller` and `Installer<>` is to use `ScriptableObjectInstaller` which has some unique advantages (especially for settings) - for details see [here](#scriptable-object-installer).
+Another option in addition to `MonoInstaller` and `Installer<>` is to use `ScriptableObjectInstaller` which has some unique advantages (especially for settings) - for details see [here](#scriptableobject-installer).
 
 When calling installers from other installers it is common to want to pass parameters into it.  See [here](#runtime-parameters-for-installers) for details on how that is done.
 
@@ -1319,7 +1308,7 @@ public class TestInstaller : MonoInstaller<TestInstaller>
 
 Now, if we run our scene we can change the speed value to tune the Foo class in real time.
 
-Another (arguably better) way to do this is to use `ScriptableObjectInstaller` instead of `MonoInstaller,` which have the added advantage that you can change your settings at runtime and have those changes automatically persist when play mode is stopped.  See [here](#scriptable-object-installer) for details.
+Another (arguably better) way to do this is to use `ScriptableObjectInstaller` instead of `MonoInstaller,` which have the added advantage that you can change your settings at runtime and have those changes automatically persist when play mode is stopped.  See [here](#scriptableobject-installer) for details.
 
 ## Object Graph Validation
 
@@ -2859,7 +2848,7 @@ There are two settings on ProjectContext related to reflection baking that can b
 
 ## Upgrade Guide for Zenject 6
 
-The biggest backwards-incompatible change in Zenject 6 is that the signals system was re-written from scratch and works quite differently now.  However - if you want to continue using the previous signals implementation you can get a zenject-6-compatible version of that [here](https://github.com/svermeulen/ZenjectSignalsOld). So to use that, just import zenject 6 and make sure to uncheck the `Zenject/Source/Runtime/Signals` folder, and then add the ZenjectSignalsOld folder to your project from that link.
+The biggest backwards-incompatible change in Zenject 6 is that the signals system was re-written from scratch and works quite differently now.  However - if you want to continue using the previous signals implementation you can get a zenject-6-compatible version of that [here](https://github.com/svermeulen/ZenjectSignalsOld). So to use that, just import zenject 6 and make sure to uncheck the `OptionalExtras/Signals` folder, and then add the ZenjectSignalsOld folder to your project from that link.
 
 Another backwards-incompatible change in zenject 6 is that AsSingle can no longer be used across multiple bind statements when mapping to the same instance.  In Zenject 5.x and earlier, you could do the following:
 
