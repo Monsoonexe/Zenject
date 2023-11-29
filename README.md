@@ -5,7 +5,7 @@ This is just the contents of the Unity project with some optional extras. If you
 
 # Extenject: extensions, bug fixes and updates for Zenject 
 
-This project is simply a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
+This project is simply a fork of [Extenject](https://github.com/Mathijs-Bakker/Extenject), a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively toyed with. You probably meant to go to one of those, not this one.
 
 ## Table Of Contents
 
