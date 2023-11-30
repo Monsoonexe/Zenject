@@ -3,9 +3,16 @@ This is just the contents of the Unity project with some optional extras. If you
 
 ![Extenject Header Image](Documentation/Images/ExtenjectMainHeader.png)
 
+[![Gitter](https://img.shields.io/static/v1?label=Gitter&labelColor=ED1965&message=Support&color=grey&logo=Gitter&logoColor=White&url=https://gitter.im/Extenject/community)](https://gitter.im/Extenject/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Mathijs-Bakker/Extenject?color=green)](https://github.com/Mathijs-Bakker/Extenject/releases)
+![GitHub contributors](https://img.shields.io/github/contributors/Mathijs-Bakker/Extenject)
+![GitHub last commit](https://img.shields.io/github/last-commit/Mathijs-Bakker/Extenject)
+[![CI](https://github.com/Mathijs-Bakker/Extenject/actions/workflows/main.yml/badge.svg)](https://github.com/Mathijs-Bakker/Extenject/actions/workflows/main.yml)
+![GitHub](https://img.shields.io/github/license/Mathijs-Bakker/Extenject)
+
 # Extenject: extensions, bug fixes and updates for Zenject 
 
-This project is simply a fork of [Extenject](https://github.com/Mathijs-Bakker/Extenject), a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively toyed with. You probably meant to go to one of those, not this one.
+This project is simply a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
 
 ## Table Of Contents
 
