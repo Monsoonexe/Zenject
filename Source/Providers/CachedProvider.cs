@@ -97,7 +97,6 @@ namespace Zenject
 
                 var instances = new List<object>();
                 _creator.GetAllInstancesWithInjectSplit(context, args, out injectAction, instances);
-                Assert.IsNotNull(instances);
 
                 _instances = instances;
 #if !ZEN_MULTITHREADING
