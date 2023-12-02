@@ -12,7 +12,7 @@ namespace Zenject.Internal
         {
             var testRunner = GameObject.Find(UnitTestRunnerGameObjectName);
             Assert.IsNotNull(testRunner);
-            GameObject.DontDestroyOnLoad(testRunner);
+            Object.DontDestroyOnLoad(testRunner);
 
             // We want to clear all objects across all scenes to ensure the next test is not affected
             // at all by previous tests
@@ -20,7 +20,7 @@ namespace Zenject.Internal
             {
                 foreach (GameObject obj in SceneManager.GetSceneAt(i).GetRootGameObjects())
                 {
-                    GameObject.DestroyImmediate(obj);
+                    Object.DestroyImmediate(obj);
                 }
             }
 
@@ -35,11 +35,11 @@ namespace Zenject.Internal
                     {
                         if (immediate)
                         {
-                            GameObject.DestroyImmediate(rootObj);
+                            Object.DestroyImmediate(rootObj);
                         }
                         else
                         {
-                            GameObject.Destroy(rootObj);
+                            Object.Destroy(rootObj);
                         }
                     }
                 }
