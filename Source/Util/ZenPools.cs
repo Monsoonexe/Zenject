@@ -77,6 +77,17 @@ namespace Zenject.Internal
         public static void DespawnStatement(BindStatement statement)
         {
         }
+
+        public static PooledObject<T> SpawnList<T>(out List<T> list)
+        {
+            list = SpawnList();
+            return default;
+        }
+        
+        public readonly struct PooledObject<T> : IDisposable
+        {
+            public void Dispose() {}
+        }
 #else
         private static readonly StaticMemoryPool<InjectContext> _contextPool = new StaticMemoryPool<InjectContext>();
         private static readonly StaticMemoryPool<LookupId> _lookupIdPool = new StaticMemoryPool<LookupId>();
@@ -146,6 +157,12 @@ namespace Zenject.Internal
             return ListPool<T>.Instance.Spawn();
         }
 
+        // for use with 'using' statements
+        public static PooledObject<T> SpawnList<T>(out List<T> list)
+        {
+            return new PooledObject<T>(ListPool<T>.Instance, list = ListPool<T>.Instance.Spawn());
+        }
+
         public static void DespawnList<T>(List<T> list)
         {
             ListPool<T>.Instance.Despawn(list);
@@ -176,6 +193,20 @@ namespace Zenject.Internal
             context.Reset();
             _contextPool.Despawn(context);
         }
+
+        public readonly struct PooledObject<T> : IDisposable
+        {
+            private readonly ListPool<T> pool;
+            private readonly List<T> list;
+
+            public PooledObject(ListPool<T> pool, List<T> list)
+            {
+                this.pool = pool;
+                this.list = list;
+            }
+
+            public void Dispose() => pool.Despawn(list);
+        }
 #endif
 
         public static InjectContext SpawnInjectContext(
@@ -196,5 +227,6 @@ namespace Zenject.Internal
 
             return context;
         }
+
     }
 }

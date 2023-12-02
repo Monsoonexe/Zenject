@@ -30,7 +30,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container)
         {
-            return InstallFromResource(resourcePath, container, new object[0]);
+            return InstallFromResource(resourcePath, container, System.Array.Empty<object>());
         }
 
         public static TDerived InstallFromResource(DiContainer container, object[] extraArgs)

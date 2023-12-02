@@ -3,6 +3,7 @@ using ModestTree.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Zenject
 {
@@ -98,7 +99,10 @@ namespace Zenject
     {
         protected override IEnumerable<Type> ProvidedTypes
         {
-            get { return new Type[0]; }
+            get
+            {
+                yield break;
+            }
         }
 
         public virtual TBase Create(TKey key)

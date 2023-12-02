@@ -67,7 +67,8 @@ namespace Zenject
         {
             _bindingFinalizer = null;
 
-            for (int i = 0; i < _disposables.Count; i++)
+            int count = _disposables.Count;
+            for (int i = 0; i < count; i++)
             {
                 _disposables[i].Dispose();
             }

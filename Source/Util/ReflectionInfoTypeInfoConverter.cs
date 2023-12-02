@@ -90,7 +90,7 @@ namespace Zenject.Internal
                     factoryMethod = args =>
                     {
                         Assert.That(args.Length == 0);
-                        return Activator.CreateInstance(type, new object[0]);
+                        return Activator.CreateInstance(type, Array.Empty<object>());
                     };
                 }
                 else

@@ -88,9 +88,8 @@ namespace Zenject
         {
             get
             {
-                var result = new List<string>();
-                result.AddRange(_parentContractNames);
-                return result;
+                foreach (string name in _parentContractNames)
+                    yield return name;
             }
             set
             {
@@ -204,21 +203,20 @@ namespace Zenject
             Assert.IsNull(ParentContainers,
                 "Scene cannot have both a parent scene context name set and also an explicit parent container given");
 
-            var parentContainers = UnityUtil.AllLoadedScenes
+            IEnumerable<DiContainer> parentContainers = UnityUtil.AllLoadedScenes
                 .Except(gameObject.scene)
                 .SelectMany(scene => scene.GetRootGameObjects())
                 .SelectMany(root => root.GetComponentsInChildren<SceneContext>())
                 .Where(sceneContext => sceneContext.ContractNames.Where(x => parentContractNames.Contains(x)).Any())
-                .Select(x => x.Container)
-                .ToList();
+                .Select(x => x.Container);
 
-            return !parentContainers.Any()
+            return parentContainers.IsEmpty()
                 ? throw Assert.CreateException(
                     "SceneContext on object {0} of scene {1} requires at least one of contracts '{2}', but none of the loaded SceneContexts implements that contract.",
                     gameObject.name,
                     gameObject.scene.name,
                     parentContractNames.Join(", "))
-                : (IEnumerable<DiContainer>)parentContainers;
+                : parentContainers;
         }
 
         private List<SceneDecoratorContext> LookupDecoratorContexts()
@@ -247,15 +245,8 @@ namespace Zenject
             _container = new DiContainer(parents, parents.First().IsValidating);
 
             // Do this after creating DiContainer in case it's needed by the pre install logic
-            if (PreInstall != null)
-            {
-                PreInstall();
-            }
-
-            if (OnPreInstall != null)
-            {
-                OnPreInstall.Invoke();
-            }
+            PreInstall?.Invoke();
+            OnPreInstall?.Invoke();
 
             Assert.That(_decoratorContexts.IsEmpty());
             _decoratorContexts.AddRange(LookupDecoratorContexts());
@@ -267,51 +258,39 @@ namespace Zenject
             // so that it doesn't inject on the game object twice
             // InitialComponentsInjecter will also guarantee that any component that is injected into
             // another component has itself been injected
-            var injectableMonoBehaviours = new List<MonoBehaviour>();
-            GetInjectableMonoBehaviours(injectableMonoBehaviours);
-            foreach (MonoBehaviour instance in injectableMonoBehaviours)
+            using (ZenPools.SpawnList<MonoBehaviour>(out var injectableMonoBehaviours))
             {
-                _container.QueueForInject(instance);
+                GetInjectableMonoBehaviours(injectableMonoBehaviours);
+                foreach (MonoBehaviour instance in injectableMonoBehaviours)
+                {
+                    _container.QueueForInject(instance);
+                }
+
+                foreach (SceneDecoratorContext decoratorContext in _decoratorContexts)
+                {
+                    decoratorContext.Initialize(_container);
+                }
+
+                _container.IsInstalling = true;
+
+                try
+                {
+                    InstallBindings(injectableMonoBehaviours);
+                }
+                finally
+                {
+                    _container.IsInstalling = false;
+                }
             }
 
-            foreach (SceneDecoratorContext decoratorContext in _decoratorContexts)
-            {
-                decoratorContext.Initialize(_container);
-            }
-
-            _container.IsInstalling = true;
-
-            try
-            {
-                InstallBindings(injectableMonoBehaviours);
-            }
-            finally
-            {
-                _container.IsInstalling = false;
-            }
-
-            if (PostInstall != null)
-            {
-                PostInstall();
-            }
-
-            if (OnPostInstall != null)
-            {
-                OnPostInstall.Invoke();
-            }
+            PostInstall?.Invoke();
+            OnPostInstall?.Invoke();
         }
 
         public void Resolve()
         {
-            if (PreResolve != null)
-            {
-                PreResolve();
-            }
-
-            if (OnPreResolve != null)
-            {
-                OnPreResolve.Invoke();
-            }
+            PreResolve?.Invoke();
+            OnPreResolve?.Invoke();
 
             Assert.That(_hasInstalled);
             Assert.That(!_hasResolved);
@@ -319,15 +298,8 @@ namespace Zenject
 
             _container.ResolveRoots();
 
-            if (PostResolve != null)
-            {
-                PostResolve();
-            }
-
-            if (OnPostResolve != null)
-            {
-                OnPostResolve.Invoke();
-            }
+            PostResolve?.Invoke();
+            OnPostResolve?.Invoke();
         }
 
         private void InstallBindings(List<MonoBehaviour> injectableMonoBehaviours)

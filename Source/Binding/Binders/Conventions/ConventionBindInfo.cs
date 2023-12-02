@@ -16,7 +16,7 @@ namespace Zenject
 #if ZEN_MULTITHREADING
         readonly object _locker = new object();
 #endif
-        private static Dictionary<Assembly, Type[]> _assemblyTypeCache = new Dictionary<Assembly, Type[]>();
+        private static readonly Dictionary<Assembly, Type[]> _assemblyTypeCache = new Dictionary<Assembly, Type[]>();
 
         public void AddAssemblyFilter(Func<Assembly, bool> predicate)
         {

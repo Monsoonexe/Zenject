@@ -24,8 +24,8 @@ namespace Zenject
         private List<MonoInstaller> _monoInstallers = new List<MonoInstaller>();
 
         [SerializeField] private List<MonoInstaller> _installerPrefabs = new List<MonoInstaller>();
-        private List<InstallerBase> _normalInstallers = new List<InstallerBase>();
-        private List<Type> _normalInstallerTypes = new List<Type>();
+        private readonly List<InstallerBase> _normalInstallers = new List<InstallerBase>();
+        private readonly List<Type> _normalInstallerTypes = new List<Type>();
 
         public IEnumerable<MonoInstaller> Installers
         {

@@ -1,3 +1,4 @@
+using Codice.CM.WorkspaceServer.Tree.GameUI.Checkin.Updater;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,7 +42,10 @@ namespace ModestTree
 
         public static bool IsEmpty<T>(this IEnumerable<T> enumerable)
         {
-            return !enumerable.Any();
+            foreach (var _ in enumerable)
+                return false;
+
+            return true;
         }
 
         public static IEnumerable<T> GetDuplicates<T>(this IEnumerable<T> list)

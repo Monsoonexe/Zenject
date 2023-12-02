@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 namespace Zenject
 {
     public class ListPool<T> : StaticMemoryPool<List<T>>
     {
-        private static ListPool<T> _instance = new ListPool<T>();
+        private static readonly ListPool<T> _instance = new ListPool<T>();
 
         public ListPool()
         {
@@ -25,12 +26,9 @@ namespace Zenject
         }
 #endif
 
-        public static ListPool<T> Instance
-        {
-            get { return _instance; }
-        }
+        public static ListPool<T> Instance => _instance;
 
-        private void OnDespawned(List<T> list)
+        private static void OnDespawned(List<T> list)
         {
             list.Clear();
         }

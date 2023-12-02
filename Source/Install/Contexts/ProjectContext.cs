@@ -17,7 +17,6 @@ namespace Zenject
         public static event Action PostResolve;
 
         public const string ProjectContextResourcePath = "ProjectContext";
-        public const string ProjectContextResourcePathOld = "ProjectCompositionRoot";
         private static ProjectContext _instance;
 
         // TODO: Set this to false the next time major version is incremented
@@ -67,7 +66,7 @@ namespace Zenject
 
         public override IEnumerable<GameObject> GetRootGameObjects()
         {
-            return new[] { gameObject };
+            yield return gameObject;
         }
 
         public static GameObject TryGetPrefab()
@@ -78,15 +77,6 @@ namespace Zenject
             {
                 Assert.That(prefabs.Length == 1,
                     "Found multiple project context prefabs at resource path '{0}'", ProjectContextResourcePath);
-                return (GameObject)prefabs[0];
-            }
-
-            prefabs = Resources.LoadAll(ProjectContextResourcePathOld, typeof(GameObject));
-
-            if (prefabs.Length > 0)
-            {
-                Assert.That(prefabs.Length == 1,
-                    "Found multiple project context prefabs at resource path '{0}'", ProjectContextResourcePathOld);
                 return (GameObject)prefabs[0];
             }
 
@@ -200,7 +190,6 @@ namespace Zenject
         protected override void Awake()
         {
             // We don't call base.Awake here because ProjectContext gets instantiated every time. 
-
 
             if (Application.isPlaying)
             // DontDestroyOnLoad can only be called when in play mode and otherwise produces errors

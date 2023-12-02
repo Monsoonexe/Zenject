@@ -5,11 +5,13 @@ namespace Zenject
 {
     public class DictionaryPool<TKey, TValue> : StaticMemoryPool<Dictionary<TKey, TValue>>
     {
-        private static DictionaryPool<TKey, TValue> _instance = new DictionaryPool<TKey, TValue>();
+        private static readonly DictionaryPool<TKey, TValue> _instance = new DictionaryPool<TKey, TValue>();
 
         public DictionaryPool()
         {
+#if !ZEN_STRIP_ASSERTS_IN_BUILDS
             OnSpawnMethod = OnSpawned;
+#endif
             OnDespawnedMethod = OnDespawned;
         }
 
@@ -43,4 +45,3 @@ namespace Zenject
         }
     }
 }
-

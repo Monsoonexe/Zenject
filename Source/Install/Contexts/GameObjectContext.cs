@@ -35,7 +35,7 @@ namespace Zenject
 
         public override IEnumerable<GameObject> GetRootGameObjects()
         {
-            return new[] { gameObject };
+            yield return gameObject;
         }
 
         [Inject]
@@ -90,30 +90,31 @@ namespace Zenject
                 PreInstall();
             }
 
-            var injectableMonoBehaviours = new List<MonoBehaviour>();
-
-            GetInjectableMonoBehaviours(injectableMonoBehaviours);
-
-            foreach (MonoBehaviour instance in injectableMonoBehaviours)
+            using (ZenPools.SpawnList<MonoBehaviour>(out var injectableMonoBehaviours))
             {
-                if (instance is MonoKernel)
+                GetInjectableMonoBehaviours(injectableMonoBehaviours);
+
+                foreach (MonoBehaviour instance in injectableMonoBehaviours)
                 {
-                    Assert.That(ReferenceEquals(instance, _kernel),
-                        "Found MonoKernel derived class that is not hooked up to GameObjectContext.  If you use MonoKernel, you must indicate this to GameObjectContext by dragging and dropping it to the Kernel field in the inspector");
+                    if (instance is MonoKernel)
+                    {
+                        Assert.That(ReferenceEquals(instance, _kernel),
+                            "Found MonoKernel derived class that is not hooked up to GameObjectContext.  If you use MonoKernel, you must indicate this to GameObjectContext by dragging and dropping it to the Kernel field in the inspector");
+                    }
+
+                    _container.QueueForInject(instance);
                 }
 
-                _container.QueueForInject(instance);
-            }
+                _container.IsInstalling = true;
 
-            _container.IsInstalling = true;
-
-            try
-            {
-                InstallBindings(injectableMonoBehaviours);
-            }
-            finally
-            {
-                _container.IsInstalling = false;
+                try
+                {
+                    InstallBindings(injectableMonoBehaviours);
+                }
+                finally
+                {
+                    _container.IsInstalling = false;
+                }
             }
 
             if (PostInstall != null)
@@ -158,28 +159,33 @@ namespace Zenject
             ZenUtilInternal.AddStateMachineBehaviourAutoInjectersUnderGameObject(gameObject);
 
             // We inject on all components on the root except ourself
-            foreach (MonoBehaviour monoBehaviour in GetComponents<MonoBehaviour>())
+            using (ZenPools.SpawnList<MonoBehaviour>(out var monos))
             {
-                if (monoBehaviour == null)
+                GetComponents(monos);
+                foreach (MonoBehaviour monoBehaviour in monos)
                 {
                     // Missing script
-                    continue;
-                }
+                    if (monoBehaviour == null)
+                    {
+                        continue;
+                    }
 
-                if (!ZenUtilInternal.IsInjectableMonoBehaviourType(monoBehaviour.GetType()))
-                {
-                    continue;
-                }
+                    if (!ZenUtilInternal.IsInjectableMonoBehaviourType(monoBehaviour.GetType()))
+                    {
+                        continue;
+                    }
 
-                if (monoBehaviour == this)
-                {
-                    continue;
-                }
+                    if (monoBehaviour == this)
+                    {
+                        continue;
+                    }
 
-                monoBehaviours.Add(monoBehaviour);
+                    monoBehaviours.Add(monoBehaviour);
+                }
             }
 
-            for (int i = 0; i < transform.childCount; i++)
+            int childCount = transform.childCount;
+            for (int i = 0; i < childCount; i++)
             {
                 Transform child = transform.GetChild(i);
 

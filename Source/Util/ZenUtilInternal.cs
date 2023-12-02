@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
 using ModestTree.Util;
+
 #if !NOT_UNITY3D
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -89,7 +90,8 @@ namespace Zenject.Internal
             foreach (Scene scene in UnityUtil.AllLoadedScenes)
             {
                 var contexts = scene.GetRootGameObjects()
-                    .SelectMany(root => root.GetComponentsInChildren<SceneContext>()).ToList();
+                    .SelectMany(root => root.GetComponentsInChildren<SceneContext>())
+                    .ToList();
 
                 if (contexts.IsEmpty())
                 {
@@ -125,13 +127,15 @@ namespace Zenject.Internal
             using (ProfileTimers.CreateTimedBlock("Searching Hierarchy"))
 #endif
             {
-                Animator[] animators = root.GetComponentsInChildren<Animator>(true);
-
-                foreach (Animator animator in animators)
+                using (ZenPools.SpawnList<Animator>(out var animators))
                 {
-                    if (animator.gameObject.GetComponent<ZenjectStateMachineBehaviourAutoInjecter>() == null)
+                    root.GetComponentsInChildren(true, animators);
+                    foreach (Animator animator in animators)
                     {
-                        animator.gameObject.AddComponent<ZenjectStateMachineBehaviourAutoInjecter>();
+                        if (!animator.TryGetComponent<ZenjectStateMachineBehaviourAutoInjecter>(out _))
+                        {
+                            animator.gameObject.AddComponent<ZenjectStateMachineBehaviourAutoInjecter>();
+                        }
                     }
                 }
             }
@@ -175,45 +179,50 @@ namespace Zenject.Internal
                 return;
             }
 
-            MonoBehaviour[] monoBehaviours = gameObject.GetComponents<MonoBehaviour>();
-
-            for (int i = 0; i < monoBehaviours.Length; i++)
+            // hmmm - recursive allocation... too much?
+            using (ZenPools.SpawnList<MonoBehaviour>(out var monoBehaviours))
             {
-                MonoBehaviour monoBehaviour = monoBehaviours[i];
-
-                // Can be null for broken component references
-                if (monoBehaviour != null
-                        && monoBehaviour.GetType().DerivesFromOrEqual<GameObjectContext>())
+                gameObject.GetComponents(monoBehaviours);
+                int len = monoBehaviours.Count;
+                for (int i = 0; i < len; i++)
                 {
-                    // Need to make sure we don't inject on any MonoBehaviour's that are below a GameObjectContext
-                    // Since that is the responsibility of the GameObjectContext
-                    // BUT we do want to inject on the GameObjectContext itself
-                    injectableComponents.Add(monoBehaviour);
-                    return;
+                    MonoBehaviour monoBehaviour = monoBehaviours[i];
+
+                    // Can be null for broken component references
+                    if (monoBehaviour != null
+                            && monoBehaviour.GetType().DerivesFromOrEqual<GameObjectContext>())
+                    {
+                        // Need to make sure we don't inject on any MonoBehaviour's that are below a GameObjectContext
+                        // Since that is the responsibility of the GameObjectContext
+                        // BUT we do want to inject on the GameObjectContext itself
+                        injectableComponents.Add(monoBehaviour);
+                        return;
+                    }
                 }
-            }
 
-            // Recurse first so it adds components bottom up though it shouldn't really matter much
-            // because it should always inject in the dependency order
-            for (int i = 0; i < gameObject.transform.childCount; i++)
-            {
-                Transform child = gameObject.transform.GetChild(i);
-
-                if (child != null)
+                // Recurse first so it adds components bottom up, though it shouldn't really matter much
+                // because it should always inject in the dependency order
+                int count = gameObject.transform.childCount;
+                for (int i = 0; i < count; i++)
                 {
-                    GetInjectableMonoBehavioursUnderGameObjectInternal(child.gameObject, injectableComponents);
+                    Transform child = gameObject.transform.GetChild(i);
+
+                    if (child != null)
+                    {
+                        GetInjectableMonoBehavioursUnderGameObjectInternal(child.gameObject, injectableComponents);
+                    }
                 }
-            }
 
-            for (int i = 0; i < monoBehaviours.Length; i++)
-            {
-                MonoBehaviour monoBehaviour = monoBehaviours[i];
-
-                // Can be null for broken component references
-                if (monoBehaviour != null
-                    && IsInjectableMonoBehaviourType(monoBehaviour.GetType()))
+                for (int i = 0; i < len; i++)
                 {
-                    injectableComponents.Add(monoBehaviour);
+                    MonoBehaviour monoBehaviour = monoBehaviours[i];
+
+                    // Can be null for broken component references
+                    if (monoBehaviour != null
+                        && IsInjectableMonoBehaviourType(monoBehaviour.GetType()))
+                    {
+                        injectableComponents.Add(monoBehaviour);
+                    }
                 }
             }
         }
@@ -233,7 +242,7 @@ namespace Zenject.Internal
                 if (scene.isLoaded)
                 {
                     return scene.GetRootGameObjects()
-                        .Where(x => x.GetComponent<ProjectContext>() == null);
+                        .Where(x => !x.TryGetComponent<ProjectContext>(out _));
                 }
 
                 // Note: We can't use scene.GetRootObjects() here because that apparently fails with an exception
@@ -251,7 +260,7 @@ namespace Zenject.Internal
                 // We also make sure not to inject into the project root objects which are injected by ProjectContext.
                 return Resources.FindObjectsOfTypeAll<GameObject>()
                     .Where(x => x.transform.parent == null
-                            && x.GetComponent<ProjectContext>() == null
+                            && !x.TryGetComponent<ProjectContext>(out _)
                             && x.scene == scene);
             }
         }

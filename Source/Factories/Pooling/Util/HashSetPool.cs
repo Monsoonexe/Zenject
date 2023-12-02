@@ -5,11 +5,13 @@ namespace Zenject
 {
     public class HashSetPool<T> : StaticMemoryPool<HashSet<T>>
     {
-        private static HashSetPool<T> _instance = new HashSetPool<T>();
+        private static readonly HashSetPool<T> _instance = new HashSetPool<T>();
 
         public HashSetPool()
         {
+#if !ZEN_STRIP_ASSERTS_IN_BUILDS
             OnSpawnMethod = OnSpawned;
+#endif
             OnDespawnedMethod = OnDespawned;
         }
 
