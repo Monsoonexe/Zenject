@@ -1,6 +1,7 @@
 #if !NOT_UNITY3D
 
 using ModestTree;
+using Zenject.Internal;
 
 namespace Zenject
 {
@@ -158,12 +159,15 @@ namespace Zenject
                 }
             }
 
-            TInstaller[] installers = gameObj.GetComponentsInChildren<TInstaller>();
+            using (ZenPools.SpawnList<TInstaller>(out var installers))
+            {
+                gameObj.GetComponentsInChildren(installers);
 
-            Assert.That(installers.Length == 1,
-                "Could not find unique MonoInstaller with type '{0}' on prefab '{1}'", typeof(TInstaller), gameObj.name);
+                Assert.That(installers.Count == 1,
+                    "Could not find unique MonoInstaller with type '{0}' on prefab '{1}'", typeof(TInstaller), gameObj.name);
 
-            return installers[0];
+                return installers[0];
+            }
         }
     }
 }
