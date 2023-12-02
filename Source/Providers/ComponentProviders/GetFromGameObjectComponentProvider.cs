@@ -4,6 +4,7 @@ using ModestTree;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject.Internal;
 
 namespace Zenject
 {
@@ -38,8 +39,8 @@ namespace Zenject
             return _componentType;
         }
 
-        public void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+        public void GetAllInstancesWithInjectSplit(InjectContext context, 
+            List<TypeValuePair> args, out Action injectAction, List<object> buffer)
         {
             Assert.IsNotNull(context);
 
@@ -56,13 +57,16 @@ namespace Zenject
                 return;
             }
 
-            Component[] allComponents = _gameObject.GetComponents(_componentType);
+            using (ZenPools.SpawnList<Component>(out var allComponents))
+            {
+                _gameObject.GetComponents(_componentType, allComponents);
 
-            Assert.That(allComponents.Length >= 1,
-            "Expected to find at least one component with type '{0}' on prefab '{1}'",
-            _componentType, _gameObject.name);
+                Assert.That(allComponents.Count >= 1,
+                "Expected to find at least one component with type '{0}' on prefab '{1}'",
+                _componentType, _gameObject.name);
 
-            buffer.AllocFreeAddRange(allComponents);
+                buffer.AddRange(allComponents);
+            }
         }
     }
 }
