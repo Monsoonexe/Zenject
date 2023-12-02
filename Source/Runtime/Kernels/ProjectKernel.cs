@@ -4,6 +4,7 @@ using ModestTree;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using Zenject.Internal;
 
 namespace Zenject
 {
@@ -60,24 +61,26 @@ namespace Zenject
             // (Unless it is destroyed manually)
             Assert.That(!IsDestroyed);
 
-            var sceneOrder = new List<Scene>();
-
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            using (ZenPools.SpawnList<Scene>(out var sceneOrder))
             {
-                sceneOrder.Add(SceneManager.GetSceneAt(i));
-            }
-
-            // Destroy the scene contexts from bottom to top
-            // Since this is the reverse order that they were loaded in
-            foreach (SceneContext sceneContext in _contextRegistry.SceneContexts.OrderByDescending(x => sceneOrder.IndexOf(x.gameObject.scene)).ToList())
-            {
-                if (immediate)
+                for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
-                    DestroyImmediate(sceneContext.gameObject);
+                    sceneOrder.Add(SceneManager.GetSceneAt(i));
                 }
-                else
+
+                // Destroy the scene contexts from bottom to top
+                // Since this is the reverse order that they were loaded in
+                foreach (SceneContext sceneContext in _contextRegistry.SceneContexts
+                    .OrderByDescending(x => sceneOrder.IndexOf(x.gameObject.scene)).ToList())
                 {
-                    Destroy(sceneContext.gameObject);
+                    if (immediate)
+                    {
+                        DestroyImmediate(sceneContext.gameObject);
+                    }
+                    else
+                    {
+                        Destroy(sceneContext.gameObject);
+                    }
                 }
             }
         }

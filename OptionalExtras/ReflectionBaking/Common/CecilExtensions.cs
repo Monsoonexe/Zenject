@@ -90,7 +90,8 @@ namespace Zenject.ReflectionBaking
 
         public static MethodDefinition GetMethod(this TypeDefinition instance, string name)
         {
-            for (int i = 0; i < instance.Methods.Count; i++)
+            int count = instance.Methods.Count;
+            for (int i = 0; i < count; i++)
             {
                 MethodDefinition methodDef = instance.Methods[i];
 
@@ -104,7 +105,8 @@ namespace Zenject.ReflectionBaking
 
         public static MethodDefinition GetMethod(this TypeDefinition instance, string name, params Type[] parameterTypes)
         {
-            for (int i = 0; i < instance.Methods.Count; i++)
+            int count = instance.Methods.Count;
+            for (int i = 0; i < count; i++)
             {
                 MethodDefinition methodDefinition = instance.Methods[i];
 

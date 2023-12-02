@@ -230,7 +230,8 @@ namespace Zenject.MemoryPoolMonitor
 
             float columnPos = 0.0f;
 
-            for (int i = 0; i < NumColumns; i++)
+            int len = NumColumns;
+            for (int i = 0; i < len; i++)
             {
                 float columnWidth = GetColumnWidth(i);
                 DrawColumn1(i, columnPos, columnWidth);
@@ -279,7 +280,8 @@ namespace Zenject.MemoryPoolMonitor
         {
             Vector2 mousePositionInContent = Event.current.mousePosition + (Vector2.up * _scrollPosition);
 
-            for (int i = 0; i < _pools.Count; i++)
+            int len = _pools.Count;
+            for (int i = 0; i < len; i++)
             {
                 IMemoryPool pool = _pools[i];
 
@@ -305,7 +307,8 @@ namespace Zenject.MemoryPoolMonitor
         {
             Vector2 mousePositionInContent = Event.current.mousePosition;
 
-            for (int i = 0; i < _pools.Count; i++)
+            int len = _pools.Count;
+            for (int i = 0; i < len; i++)
             {
                 IMemoryPool pool = _pools[i];
                 Rect rowRect = GetPoolRowRect(i);
@@ -329,7 +332,8 @@ namespace Zenject.MemoryPoolMonitor
 
             float columnPos = 0.0f;
 
-            for (int i = 0; i < NumColumns; i++)
+            int len = NumColumns;
+            for (int i = 0; i < len; i++)
             {
                 float columnWidth = GetColumnWidth(i);
                 DrawColumn(i, columnPos, columnWidth);
@@ -365,6 +369,7 @@ namespace Zenject.MemoryPoolMonitor
                     DrawColumnContents(index, cellBounds, pool);
                 }
             }
+
             GUI.EndGroup();
         }
 
