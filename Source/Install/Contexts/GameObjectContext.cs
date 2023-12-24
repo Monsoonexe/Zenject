@@ -85,12 +85,9 @@ namespace Zenject
             _container = parentContainer.CreateSubContainer();
 
             // Do this after creating DiContainer in case it's needed by the pre install logic
-            if (PreInstall != null)
-            {
-                PreInstall();
-            }
+            PreInstall?.Invoke();
 
-            using (ZenPools.SpawnList<MonoBehaviour>(out var injectableMonoBehaviours))
+            using (ZenPools.SpawnList(out List<MonoBehaviour> injectableMonoBehaviours))
             {
                 GetInjectableMonoBehaviours(injectableMonoBehaviours);
 
@@ -117,25 +114,14 @@ namespace Zenject
                 }
             }
 
-            if (PostInstall != null)
-            {
-                PostInstall();
-            }
+            PostInstall?.Invoke();
         }
 
         private void ResolveAndStart()
         {
-            if (PreResolve != null)
-            {
-                PreResolve();
-            }
-
+            PreResolve?.Invoke();
             _container.ResolveRoots();
-
-            if (PostResolve != null)
-            {
-                PostResolve();
-            }
+            PostResolve?.Invoke();
 
             // Normally, the IInitializable.Initialize method would be called during MonoKernel.Start
             // However, this behaviour is undesirable for dynamically created objects, since Unity
@@ -159,7 +145,7 @@ namespace Zenject
             ZenUtilInternal.AddStateMachineBehaviourAutoInjectersUnderGameObject(gameObject);
 
             // We inject on all components on the root except ourself
-            using (ZenPools.SpawnList<MonoBehaviour>(out var monos))
+            using (ZenPools.SpawnList<MonoBehaviour>(out List<MonoBehaviour> monos))
             {
                 GetComponents(monos);
                 foreach (MonoBehaviour monoBehaviour in monos)
@@ -175,7 +161,7 @@ namespace Zenject
                         continue;
                     }
 
-                    if (monoBehaviour == this)
+                    if (ReferenceEquals(monoBehaviour, this))
                     {
                         continue;
                     }
@@ -200,18 +186,23 @@ namespace Zenject
         private void InstallBindings(List<MonoBehaviour> injectableMonoBehaviours)
         {
             _container.DefaultParent = transform;
-
             _container.Bind<Context>().FromInstance(this);
             _container.Bind<GameObjectContext>().FromInstance(this);
 
             if (_kernel == null)
             {
                 _container.Bind<MonoKernel>()
-                    .To<DefaultGameObjectKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+                    .To<DefaultGameObjectKernel>()
+                    .FromNewComponentOn(gameObject)
+                    .AsSingle()
+                    .NonLazy();
             }
             else
             {
-                _container.Bind<MonoKernel>().FromInstance(_kernel).AsSingle().NonLazy();
+                _container.Bind<MonoKernel>()
+                    .FromInstance(_kernel)
+                    .AsSingle()
+                    .NonLazy();
             }
 
             InstallSceneBindings(injectableMonoBehaviours);
