@@ -250,7 +250,8 @@ namespace Zenject
 
         protected void InstallSceneBindings(List<MonoBehaviour> injectableMonoBehaviours)
         {
-            foreach (ZenjectBinding binding in injectableMonoBehaviours.OfType<ZenjectBinding>())
+            // assign the appropriate binding context to all ZenjectBinding components
+            foreach (var binding in injectableMonoBehaviours.OfType<ZenjectBinding>())
             {
                 if (binding == null)
                 {
@@ -268,7 +269,7 @@ namespace Zenject
             // TODO: Consider changing this
             // Maybe ZenjectBinding could add itself to a registry class on Awake/OnEnable
             // then we could avoid calling the slow Resources.FindObjectsOfTypeAll here
-            foreach (ZenjectBinding binding in Resources.FindObjectsOfTypeAll<ZenjectBinding>())
+            foreach (var binding in Resources.FindObjectsOfTypeAll<ZenjectBinding>())
             {
                 if (binding == null)
                 {
@@ -279,14 +280,15 @@ namespace Zenject
                 // since it won't be caught in the other loop above
                 if (this is SceneContext)
                 {
-                    if (binding.Context == null && binding.UseSceneContext
-                                                && binding.gameObject.scene == gameObject.scene)
+                    if (binding.Context == null
+                        && binding.UseSceneContext
+                        && binding.gameObject.scene == gameObject.scene)
                     {
                         binding.Context = this;
                     }
                 }
 
-                if (binding.Context == this)
+                if (ReferenceEquals(binding.Context, this))
                 {
                     InstallZenjectBinding(binding);
                 }
