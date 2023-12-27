@@ -3,7 +3,6 @@ using ModestTree.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Zenject
 {
@@ -66,9 +65,7 @@ namespace Zenject
 
         protected Type GetTypeForKey(TKey key)
         {
-            Type keyedType;
-
-            if (!_typeMap.TryGetValue(key, out keyedType))
+            if (!_typeMap.TryGetValue(key, out Type keyedType))
             {
                 Assert.IsNotNull(_fallbackType, "Could not find instance for key '{0}'", key);
                 return _fallbackType;

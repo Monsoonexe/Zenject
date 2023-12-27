@@ -21,14 +21,12 @@ namespace ModestTree.Util
 
         public override bool Equals(Object obj)
         {
-            var that = obj as ValuePair<T1, T2>;
-
-            return that != null && Equals(that);
+            return obj is ValuePair<T1, T2> that && Equals(that);
         }
 
         public bool Equals(ValuePair<T1, T2> that)
         {
-            return that != null && object.Equals(First, that.First) && object.Equals(Second, that.Second);
+            return that != null && First.Equals(that.First) && Second.Equals(that.Second);
         }
 
         public override int GetHashCode()
@@ -65,9 +63,7 @@ namespace ModestTree.Util
 
         public override bool Equals(Object obj)
         {
-            var that = obj as ValuePair<T1, T2, T3>;
-
-            return that != null && Equals(that);
+            return obj is ValuePair<T1, T2, T3> that && Equals(that);
         }
 
         public bool Equals(ValuePair<T1, T2, T3> that)
@@ -114,7 +110,7 @@ namespace ModestTree.Util
             Fourth = fourth;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             return obj is ValuePair<T1, T2, T3, T4> that && Equals(that);
         }

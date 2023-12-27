@@ -153,10 +153,7 @@ namespace Zenject
 
         public void Despawn(TValue element)
         {
-            if (_onDespawnedMethod != null)
-            {
-                _onDespawnedMethod(element);
-            }
+            _onDespawnedMethod?.Invoke(element);
 
 #if ZEN_MULTITHREADING
             lock (_locker)
@@ -215,10 +212,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(item);
-                }
+                _onSpawnMethod?.Invoke(item);
 
                 return item;
             }
@@ -255,10 +249,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(param, item);
-                }
+                _onSpawnMethod?.Invoke(param, item);
 
                 return item;
             }
@@ -295,10 +286,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, item);
 
                 return item;
             }
@@ -335,10 +323,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, p3, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, p3, item);
 
                 return item;
             }
@@ -385,10 +370,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, p3, p4, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, p3, p4, item);
 
                 return item;
             }
@@ -435,10 +417,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, p3, p4, p5, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, p3, p4, p5, item);
 
                 return item;
             }
@@ -485,10 +464,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, p3, p4, p5, p6, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, p3, p4, p5, p6, item);
 
                 return item;
             }
@@ -535,10 +511,7 @@ namespace Zenject
             {
                 TValue item = SpawnInternal();
 
-                if (_onSpawnMethod != null)
-                {
-                    _onSpawnMethod(p1, p2, p3, p4, p5, p6, p7, item);
-                }
+                _onSpawnMethod?.Invoke(p1, p2, p3, p4, p5, p6, p7, item);
 
                 return item;
             }

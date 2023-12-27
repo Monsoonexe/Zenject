@@ -145,9 +145,8 @@ namespace Zenject
             string resourcePath, DiContainer container)
             where TInstaller : MonoInstallerBase
         {
-            bool shouldMakeActive;
             UnityEngine.GameObject gameObj = container.CreateAndParentPrefabResource(
-                resourcePath, GameObjectCreationParameters.Default, null, out shouldMakeActive);
+                resourcePath, GameObjectCreationParameters.Default, null, out bool shouldMakeActive);
 
             if (shouldMakeActive && !container.IsValidating)
             {
@@ -159,7 +158,7 @@ namespace Zenject
                 }
             }
 
-            using (ZenPools.SpawnList<TInstaller>(out var installers))
+            using (ZenPools.Spawn(out System.Collections.Generic.List<TInstaller> installers))
             {
                 gameObj.GetComponentsInChildren(installers);
 
