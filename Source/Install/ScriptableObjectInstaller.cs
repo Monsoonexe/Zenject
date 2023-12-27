@@ -30,7 +30,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container)
         {
-            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath, container);
+            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath);
             container.Inject(installer);
             installer.InstallBindings();
             return installer;
@@ -48,7 +48,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container, TParam1 p1)
         {
-            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath, container);
+            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath);
             container.InjectExplicit(installer, InjectUtil.CreateArgListExplicit(p1));
             installer.InstallBindings();
             return installer;
@@ -66,7 +66,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container, TParam1 p1, TParam2 p2)
         {
-            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath, container);
+            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath);
             container.InjectExplicit(installer, InjectUtil.CreateArgListExplicit(p1, p2));
             installer.InstallBindings();
             return installer;
@@ -84,7 +84,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3)
         {
-            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath, container);
+            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath);
             container.InjectExplicit(installer, InjectUtil.CreateArgListExplicit(p1, p2, p3));
             installer.InstallBindings();
             return installer;
@@ -102,7 +102,7 @@ namespace Zenject
 
         public static TDerived InstallFromResource(string resourcePath, DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4)
         {
-            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath, container);
+            TDerived installer = ScriptableObjectInstallerUtil.CreateInstaller<TDerived>(resourcePath);
             container.InjectExplicit(installer, InjectUtil.CreateArgListExplicit(p1, p2, p3, p4));
             installer.InstallBindings();
             return installer;
@@ -117,8 +117,7 @@ namespace Zenject
             return "Installers/" + typeof(TInstaller).PrettyName();
         }
 
-        public static TInstaller CreateInstaller<TInstaller>(
-            string resourcePath, DiContainer container)
+        public static TInstaller CreateInstaller<TInstaller>(string resourcePath)
             where TInstaller : ScriptableObjectInstallerBase
         {
             Object[] installers = Resources.LoadAll(resourcePath);
