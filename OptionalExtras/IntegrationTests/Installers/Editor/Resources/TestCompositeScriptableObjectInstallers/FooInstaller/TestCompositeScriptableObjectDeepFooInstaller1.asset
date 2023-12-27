@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _leafInstallers:
   - {fileID: 11400000, guid: d2878aad2b9161942a0475b3c1c90664, type: 2}
-  - {fileID: 11400000, guid: b302add06eb2b9a47a377f9b8a9a63ea, type: 2}
