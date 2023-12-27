@@ -14,7 +14,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsComposite(compositeInstaller);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -24,8 +26,7 @@ namespace Zenject
         public static bool ValidateAsComposite<T>(this T installer)
             where T : IInstaller
         {
-            var compositeInstaller = installer as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(installer is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -36,7 +37,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsComposite(compositeInstaller);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -45,8 +48,7 @@ namespace Zenject
         public static bool ValidateAsComposite<T>(this T installer, ICompositeInstaller<T> parent1)
             where T : IInstaller
         {
-            var compositeInstaller = installer as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(installer is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -62,7 +64,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsComposite(parent1, compositeInstaller);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -71,8 +75,7 @@ namespace Zenject
         public static bool ValidateAsComposite<T>(this T installer, ICompositeInstaller<T> parent1, ICompositeInstaller<T> parent2)
             where T : IInstaller
         {
-            var compositeInstaller = installer as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(installer is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -89,7 +92,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsComposite(parent1, parent2, compositeInstaller);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -98,8 +103,7 @@ namespace Zenject
         public static bool ValidateAsComposite<T>(this T installer, ICompositeInstaller<T> parent1, ICompositeInstaller<T> parent2, ICompositeInstaller<T> parent3)
             where T : IInstaller
         {
-            var compositeInstaller = installer as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(installer is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -117,7 +121,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsComposite(parent1, parent2, parent3, compositeInstaller);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -126,8 +132,7 @@ namespace Zenject
         public static bool ValidateAsComposite<T>(this T installer, ICompositeInstaller<T> parent1, ICompositeInstaller<T> parent2, ICompositeInstaller<T> parent3, ICompositeInstaller<T> parent4)
             where T : IInstaller
         {
-            var compositeInstaller = installer as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(installer is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -155,7 +160,9 @@ namespace Zenject
                 T leafInstaller = leafInstallers[i];
                 bool leafResult = leafInstaller.ValidateAsCompositeSavedAlloc(childParentInstallers);
                 if (!leafResult)
-                { return false; }
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -166,8 +173,7 @@ namespace Zenject
             IReadOnlyList<ICompositeInstaller<T>> parentInstallers)
             where T : IInstaller
         {
-            var compositeInstaller = leafInstaller as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(leafInstaller is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
@@ -194,8 +200,7 @@ namespace Zenject
             List<ICompositeInstaller<T>> reusableParentInstallers)
             where T : IInstaller
         {
-            var compositeInstaller = leafInstaller as ICompositeInstaller<T>;
-            if (compositeInstaller == null)
+            if (!(leafInstaller is ICompositeInstaller<T> compositeInstaller))
             {
                 return true;
             }
