@@ -14,9 +14,8 @@ namespace ModestTree
 
         public static string PrettyName(this Type type)
         {
-            string prettyName;
 
-            if (!_prettyNameCache.TryGetValue(type, out prettyName))
+            if (!_prettyNameCache.TryGetValue(type, out string prettyName))
             {
                 prettyName = PrettyNameInternal(type);
                 _prettyNameCache.Add(type, prettyName);
