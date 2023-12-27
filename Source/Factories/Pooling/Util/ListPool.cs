@@ -32,5 +32,24 @@ namespace Zenject
         {
             list.Clear();
         }
+
+        public PooledList Spawn(out List<T> list)
+        {
+            return new PooledList(this, list = Spawn());
+        }
+
+        public readonly struct PooledList : IDisposable
+        {
+            private readonly ListPool<T> pool;
+            private readonly List<T> item;
+
+            public PooledList(ListPool<T> pool, List<T> item)
+            {
+                this.pool = pool;
+                this.item = item;
+            }
+
+            public void Dispose() => pool.Despawn(item);
+        }
     }
 }

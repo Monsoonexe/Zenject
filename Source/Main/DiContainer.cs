@@ -5,6 +5,7 @@ using System.Linq;
 using ModestTree;
 using ModestTree.Util;
 using Zenject.Internal;
+
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
@@ -356,7 +357,7 @@ namespace Zenject
 
             Assert.IsEqual(rootProviders.Count, rootBindings.Count);
 
-            using (ZenPools.SpawnList<object>(out var instances))
+            using (ZenPools.Spawn(out List<object> instances))
             {
                 for (int i = 0; i < rootProviders.Count; i++)
                 {
@@ -465,9 +466,7 @@ namespace Zenject
         {
             var info = new ProviderInfo(provider, condition, nonLazy, this);
 
-            List<ProviderInfo> providerInfos;
-
-            if (!_providers.TryGetValue(bindingId, out providerInfos))
+            if (!_providers.TryGetValue(bindingId, out List<ProviderInfo> providerInfos))
             {
                 providerInfos = new List<ProviderInfo>();
                 _providers.Add(bindingId, providerInfos);
@@ -482,7 +481,7 @@ namespace Zenject
             Assert.IsNotNull(context);
             Assert.That(buffer.Count == 0);
 
-            using (ZenPools.SpawnList<ProviderInfo>(out var allMatches))
+            using (ZenPools.Spawn(out List<ProviderInfo> allMatches))
             {
                 GetProvidersForContract(
                     context.BindingId, context.SourceType, allMatches);
@@ -575,6 +574,7 @@ namespace Zenject
                                 // Selected provider is better because it has condition.
                                 continue;
                             }
+
                             if (selected != null)
                             {
                                 // Both providers don't have a condition and are on equal depth.
@@ -614,7 +614,6 @@ namespace Zenject
         private List<DiContainer> FlattenInheritanceChain()
         {
             var processed = new List<DiContainer>();
-
             var containerQueue = new Queue<DiContainer>();
             containerQueue.Enqueue(this);
 
@@ -637,9 +636,7 @@ namespace Zenject
 
         private void GetLocalProviders(BindingId bindingId, List<ProviderInfo> buffer)
         {
-            List<ProviderInfo> localProviders;
-
-            if (_providers.TryGetValue(bindingId, out localProviders))
+            if (_providers.TryGetValue(bindingId, out List<ProviderInfo> localProviders))
             {
                 buffer.AllocFreeAddRange(localProviders);
                 return;
@@ -712,9 +709,7 @@ namespace Zenject
                 FlushBindings();
                 CheckForInstallWarning(context);
 
-                List<ProviderInfo> matches = ZenPools.SpawnList<ProviderInfo>();
-
-                try
+                using (ZenPools.Spawn(out List<ProviderInfo> matches))
                 {
                     GetProviderMatches(context, matches);
 
@@ -729,10 +724,8 @@ namespace Zenject
                         return;
                     }
 
-                    List<object> instances = ZenPools.SpawnList<object>();
-                    List<object> allInstances = ZenPools.SpawnList<object>();
-
-                    try
+                    using (ZenPools.Spawn(out List<object> allInstances))
+                    using (ZenPools.Spawn(out List<object> instances))
                     {
                         for (int i = 0; i < matches.Count; i++)
                         {
@@ -768,15 +761,6 @@ namespace Zenject
 
                         buffer.AllocFreeAddRange(allInstances);
                     }
-                    finally
-                    {
-                        ZenPools.DespawnList(instances);
-                        ZenPools.DespawnList(allInstances);
-                    }
-                }
-                finally
-                {
-                    ZenPools.DespawnList(matches);
                 }
             }
         }
@@ -1122,9 +1106,7 @@ namespace Zenject
 
             bindInfo.Identifier = bindId;
 
-            IDecoratorProvider decoratorProvider;
-
-            if (!_decorators.TryGetValue(typeof(TContract), out decoratorProvider))
+            if (!_decorators.TryGetValue(typeof(TContract), out IDecoratorProvider decoratorProvider))
             {
                 decoratorProvider = new DecoratorProvider<TContract>(this);
                 _decorators.Add(typeof(TContract), decoratorProvider);
@@ -1153,15 +1135,12 @@ namespace Zenject
 
         private IDecoratorProvider TryGetDecoratorProvider(Type contractType)
         {
-            IDecoratorProvider decoratorProvider;
-
-            if (_decorators.TryGetValue(contractType, out decoratorProvider))
+            if (_decorators.TryGetValue(contractType, out IDecoratorProvider decoratorProvider))
             {
                 return decoratorProvider;
             }
 
             DiContainer[] ancestorContainers = AncestorContainers;
-
             for (int i = 0; i < ancestorContainers.Length; i++)
             {
                 if (ancestorContainers[i]._decorators.TryGetValue(contractType, out decoratorProvider))
@@ -1260,18 +1239,15 @@ namespace Zenject
                     "More than one (or zero) constructors found for type '{0}' when creating dependencies.  Use one [Inject] attribute to specify which to use.", concreteType);
 
                 // Make a copy since we remove from it below
-                object[] paramValues = ZenPools.SpawnArray<object>(typeInfo.InjectConstructor.Parameters.Length);
-
-                try
+                int paramCount = typeInfo.InjectConstructor.Parameters.Length;
+                using (ZenPools.Spawn(out object[] paramValues, paramCount))
                 {
                     for (int i = 0; i < typeInfo.InjectConstructor.Parameters.Length; i++)
                     {
                         InjectableInfo injectInfo = typeInfo.InjectConstructor.Parameters[i];
 
-                        object value;
-
-                        if (!InjectUtil.PopValueWithType(
-                            extraArgs, injectInfo.MemberType, out value))
+                        if (!InjectUtil.PopValueWithType(extraArgs,
+                            injectInfo.MemberType, out object value))
                         {
                             using (InjectContext subContext = ZenPools.SpawnInjectContext(
                                 this, injectInfo, context, null, concreteType, concreteIdentifier))
@@ -1280,7 +1256,9 @@ namespace Zenject
                             }
                         }
 
-                        paramValues[i] = value == null || value is ValidationMarker ? injectInfo.MemberType.GetDefaultValue() : value;
+                        paramValues[i] = value == null || value is ValidationMarker
+                            ? injectInfo.MemberType.GetDefaultValue()
+                            : value;
                     }
 
                     if (!IsValidating || allowDuringValidation)
@@ -1309,10 +1287,6 @@ namespace Zenject
                         newObj = new ValidationMarker(concreteType);
                     }
                 }
-                finally
-                {
-                    ZenPools.DespawnArray(paramValues);
-                }
             }
 
             if (autoInject)
@@ -1328,9 +1302,9 @@ namespace Zenject
             }
 
 #if DEBUG
-            if (IsValidating && newObj is IValidatable)
+            if (IsValidating && newObj is IValidatable validatable)
             {
-                QueueForValidate((IValidatable)newObj);
+                QueueForValidate(validatable);
             }
 #endif
 
@@ -1342,7 +1316,9 @@ namespace Zenject
         // Note: Any arguments that are used will be removed from extraArgMap
         public void InjectExplicit(object injectable, List<TypeValuePair> extraArgs)
         {
-            Type injectableType = injectable is ValidationMarker ? ((ValidationMarker)injectable).MarkedType : injectable.GetType();
+            Type injectableType = injectable is ValidationMarker marker
+                ? marker.MarkedType
+                : injectable.GetType();
 
             InjectExplicit(
                 injectable,
@@ -1362,9 +1338,7 @@ namespace Zenject
             {
                 if (IsValidating)
                 {
-                    var marker = injectable as ValidationMarker;
-
-                    if (marker != null && marker.InstantiateFailed)
+                    if (injectable is ValidationMarker marker && marker.InstantiateFailed)
                     {
                         // Do nothing in this case because it already failed and so there
                         // could be many knock-on errors that aren't related to the user
@@ -1420,9 +1394,7 @@ namespace Zenject
                     {
                         InjectableInfo injectInfo = method.Parameters[k];
 
-                        object value;
-
-                        if (!InjectUtil.PopValueWithType(extraArgs, injectInfo.MemberType, out value))
+                        if (!InjectUtil.PopValueWithType(extraArgs, injectInfo.MemberType, out object value))
                         {
                             using (InjectContext subContext = ZenPools.SpawnInjectContext(
                                 this, injectInfo, context, injectable, injectableType, concreteIdentifier))
@@ -1480,9 +1452,7 @@ namespace Zenject
                 InjectableInfo injectInfo = typeInfo.InjectMembers[i].Info;
                 ZenMemberSetterMethod setterMethod = typeInfo.InjectMembers[i].Setter;
 
-                object value;
-
-                if (InjectUtil.PopValueWithType(extraArgs, injectInfo.MemberType, out value))
+                if (InjectUtil.PopValueWithType(extraArgs, injectInfo.MemberType, out object value))
                 {
                     if (!isDryRun)
                     {
@@ -1594,9 +1564,9 @@ namespace Zenject
 
         private GameObject GetPrefabAsGameObject(UnityEngine.Object prefab)
         {
-            if (prefab is GameObject)
+            if (prefab is GameObject gameObject)
             {
-                return (GameObject)prefab;
+                return gameObject;
             }
 
             Assert.That(prefab is Component, "Invalid type given for prefab. Given object name: '{0}'", prefab.name);
@@ -1961,9 +1931,8 @@ namespace Zenject
         {
             FlushBindings();
 
-            bool shouldMakeActive;
             GameObject gameObj = CreateAndParentPrefab(
-                prefab, gameObjectBindInfo, null, out shouldMakeActive);
+                prefab, gameObjectBindInfo, null, out bool shouldMakeActive);
 
             InjectGameObject(gameObj);
 
@@ -2211,8 +2180,7 @@ namespace Zenject
 
             ZenUtilInternal.AddStateMachineBehaviourAutoInjectersUnderGameObject(gameObject);
 
-            List<MonoBehaviour> monoBehaviours = ZenPools.SpawnList<MonoBehaviour>();
-            try
+            using (ZenPools.Spawn(out List<MonoBehaviour> monoBehaviours))
             {
                 ZenUtilInternal.GetInjectableMonoBehavioursUnderGameObject(gameObject, monoBehaviours);
 
@@ -2220,10 +2188,6 @@ namespace Zenject
                 {
                     Inject(monoBehaviours[i]);
                 }
-            }
-            finally
-            {
-                ZenPools.DespawnList(monoBehaviours);
             }
         }
 
@@ -2273,10 +2237,8 @@ namespace Zenject
 
             ZenUtilInternal.AddStateMachineBehaviourAutoInjectersUnderGameObject(gameObject);
 
-            List<MonoBehaviour> injectableMonoBehaviours = ZenPools.SpawnList<MonoBehaviour>();
-            try
+            using (ZenPools.Spawn(out List<MonoBehaviour> injectableMonoBehaviours))
             {
-
                 ZenUtilInternal.GetInjectableMonoBehavioursUnderGameObject(gameObject, injectableMonoBehaviours);
 
                 for (int i = 0; i < injectableMonoBehaviours.Count; i++)
@@ -2291,10 +2253,6 @@ namespace Zenject
                         Inject(monoBehaviour);
                     }
                 }
-            }
-            finally
-            {
-                ZenPools.DespawnList(injectableMonoBehaviours);
             }
 
             Component[] matches = gameObject.GetComponentsInChildren(componentType, true);
@@ -2480,9 +2438,7 @@ namespace Zenject
 
             var bindingId = new BindingId(contractType, identifier);
 
-            List<ProviderInfo> providers;
-
-            if (!_providers.TryGetValue(bindingId, out providers))
+            if (!_providers.TryGetValue(bindingId, out List<ProviderInfo> providers))
             {
                 return false;
             }
@@ -3310,8 +3266,7 @@ namespace Zenject
             Assert.That(componentType.IsInterface() || componentType.DerivesFrom<Component>(),
                 "Expected type '{0}' to derive from UnityEngine.Component", componentType);
 
-            bool shouldMakeActive;
-            GameObject gameObj = CreateAndParentPrefab(prefab, gameObjectBindInfo, context, out shouldMakeActive);
+            GameObject gameObj = CreateAndParentPrefab(prefab, gameObjectBindInfo, context, out bool shouldMakeActive);
 
             Component component = InjectGameObjectForComponentExplicit(
                 gameObj, componentType, extraArgs, context, concreteIdentifier);

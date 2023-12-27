@@ -65,7 +65,7 @@ namespace Zenject
                     return;
                 }
 
-                using (ZenPools.SpawnList<Component>(out var allComponents))
+                using (ZenPools.Spawn(out List<Component> allComponents))
                 {
                     gameObject.GetComponents(_componentType, allComponents);
 

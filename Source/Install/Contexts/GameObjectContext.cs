@@ -87,7 +87,7 @@ namespace Zenject
             // Do this after creating DiContainer in case it's needed by the pre install logic
             PreInstall?.Invoke();
 
-            using (ZenPools.SpawnList(out List<MonoBehaviour> injectableMonoBehaviours))
+            using (ZenPools.Spawn(out List<MonoBehaviour> injectableMonoBehaviours))
             {
                 GetInjectableMonoBehaviours(injectableMonoBehaviours);
 
@@ -145,7 +145,7 @@ namespace Zenject
             ZenUtilInternal.AddStateMachineBehaviourAutoInjectersUnderGameObject(gameObject);
 
             // We inject on all components on the root except ourself
-            using (ZenPools.SpawnList<MonoBehaviour>(out List<MonoBehaviour> monos))
+            using (ZenPools.Spawn(out List<MonoBehaviour> monos))
             {
                 GetComponents(monos);
                 foreach (MonoBehaviour monoBehaviour in monos)

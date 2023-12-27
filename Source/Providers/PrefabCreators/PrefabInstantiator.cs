@@ -93,7 +93,7 @@ namespace Zenject
                     Assert.That(allArgs.Count == 0);
                 }
 
-                ZenPools.DespawnList<TypeValuePair>(allArgs);
+                ZenPools.DespawnList(allArgs);
 
                 if (shouldMakeActive && !_container.IsValidating)
                 {
@@ -107,24 +107,23 @@ namespace Zenject
 
                 if (_instantiateCallback != null)
                 {
-                    HashSet<object> callbackObjects = ZenPools.SpawnHashSet<object>();
-
-                    foreach (Type type in _instantiateCallbackTypes)
+                    using (ZenPools.Spawn(out HashSet<object> callbackObjects))
                     {
-                        Component obj = gameObject.GetComponentInChildren(type);
-
-                        if (obj != null)
+                        foreach (Type type in _instantiateCallbackTypes)
                         {
-                            callbackObjects.Add(obj);
+                            Component obj = gameObject.GetComponentInChildren(type);
+
+                            if (obj != null)
+                            {
+                                callbackObjects.Add(obj);
+                            }
+                        }
+
+                        foreach (object obj in callbackObjects)
+                        {
+                            _instantiateCallback(context, obj);
                         }
                     }
-
-                    foreach (object obj in callbackObjects)
-                    {
-                        _instantiateCallback(context, obj);
-                    }
-
-                    ZenPools.DespawnHashSet(callbackObjects);
                 }
             };
 

@@ -1,4 +1,5 @@
 using ModestTree;
+using System;
 using System.Collections.Generic;
 
 namespace Zenject
@@ -18,6 +19,11 @@ namespace Zenject
         public static DictionaryPool<TKey, TValue> Instance
         {
             get { return _instance; }
+        }
+
+        public PooledItem Spawn(out Dictionary<TKey, TValue> list)
+        {
+            return new PooledItem(this, list = Spawn());
         }
 
 #if UNITY_EDITOR
@@ -42,6 +48,20 @@ namespace Zenject
         private static void OnDespawned(Dictionary<TKey, TValue> items)
         {
             items.Clear();
+        }
+
+        public readonly struct PooledItem : IDisposable
+        {
+            private readonly DictionaryPool<TKey, TValue> pool;
+            private readonly Dictionary<TKey, TValue> item;
+
+            public PooledItem(DictionaryPool<TKey, TValue> pool, Dictionary<TKey, TValue> item)
+            {
+                this.pool = pool;
+                this.item = item;
+            }
+
+            public void Dispose() => pool.Despawn(item);
         }
     }
 }

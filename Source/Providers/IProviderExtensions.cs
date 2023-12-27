@@ -27,13 +27,8 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            Action injectAction;
-            creator.GetAllInstancesWithInjectSplit(context, args, out injectAction, buffer);
-
-            if (injectAction != null)
-            {
-                injectAction.Invoke();
-            }
+            creator.GetAllInstancesWithInjectSplit(context, args, out Action injectAction, buffer);
+            injectAction?.Invoke();
         }
 
         public static object TryGetInstance(
@@ -45,9 +40,7 @@ namespace Zenject
         public static object TryGetInstance(
             this IProvider creator, InjectContext context, List<TypeValuePair> args)
         {
-            List<object> allInstances = ZenPools.SpawnList<object>();
-
-            try
+            using (ZenPools.Spawn(out List<object> allInstances))
             {
                 creator.GetAllInstances(context, args, allInstances);
 
@@ -61,10 +54,6 @@ namespace Zenject
 
                 return allInstances[0];
             }
-            finally
-            {
-                ZenPools.DespawnList(allInstances);
-            }
         }
 
         public static object GetInstance(
@@ -76,9 +65,7 @@ namespace Zenject
         public static object GetInstance(
             this IProvider creator, InjectContext context, List<TypeValuePair> args)
         {
-            List<object> allInstances = ZenPools.SpawnList<object>();
-
-            try
+            using (ZenPools.Spawn(out List<object> allInstances))
             {
                 creator.GetAllInstances(context, args, allInstances);
 
@@ -89,10 +76,6 @@ namespace Zenject
                     "Provider returned multiple instances when only one was expected when looking up type '{0}'", context.MemberType);
 
                 return allInstances[0];
-            }
-            finally
-            {
-                ZenPools.DespawnList(allInstances);
             }
         }
     }

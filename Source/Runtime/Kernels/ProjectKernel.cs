@@ -61,7 +61,7 @@ namespace Zenject
             // (Unless it is destroyed manually)
             Assert.That(!IsDestroyed);
 
-            using (ZenPools.SpawnList<Scene>(out var sceneOrder))
+            using (ZenPools.Spawn(out List<Scene> sceneOrder))
             {
                 for (int i = 0; i < SceneManager.sceneCount; i++)
                 {

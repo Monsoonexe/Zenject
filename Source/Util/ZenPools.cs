@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Zenject.Internal
 {
@@ -99,9 +100,29 @@ namespace Zenject.Internal
             return HashSetPool<T>.Instance.Spawn();
         }
 
+        public static HashSetPool<T>.PooledItem Spawn<T>(out HashSet<T> set)
+        {
+            return HashSetPool<T>.Instance.Spawn(out set);
+        }
+
+        public static void DespawnHashSet<T>(HashSet<T> set)
+        {
+            HashSetPool<T>.Instance.Despawn(set);
+        }
+
         public static Dictionary<TKey, TValue> SpawnDictionary<TKey, TValue>()
         {
             return DictionaryPool<TKey, TValue>.Instance.Spawn();
+        }
+
+        public static DictionaryPool<TKey, TValue>.PooledItem Spawn<TKey, TValue>(out Dictionary<TKey, TValue> dictionary)
+        {
+            return DictionaryPool<TKey, TValue>.Instance.Spawn(out dictionary);
+        }
+
+        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+        {
+            DictionaryPool<TKey, TValue>.Instance.Despawn(dictionary);
         }
 
         public static BindStatement SpawnStatement()
@@ -126,16 +147,6 @@ namespace Zenject.Internal
             _bindInfoPool.Despawn(bindInfo);
         }
 
-        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
-        {
-            DictionaryPool<TKey, TValue>.Instance.Despawn(dictionary);
-        }
-
-        public static void DespawnHashSet<T>(HashSet<T> set)
-        {
-            HashSetPool<T>.Instance.Despawn(set);
-        }
-
         public static LookupId SpawnLookupId(IProvider provider, BindingId bindingId)
         {
             LookupId lookupId = _lookupIdPool.Spawn();
@@ -158,9 +169,9 @@ namespace Zenject.Internal
         }
 
         // for use with 'using' statements
-        public static PooledObject<T> SpawnList<T>(out List<T> list)
+        public static ListPool<T>.PooledList Spawn<T>(out List<T> list)
         {
-            return new PooledObject<T>(ListPool<T>.Instance, list = ListPool<T>.Instance.Spawn());
+            return ListPool<T>.Instance.Spawn(out list);
         }
 
         public static void DespawnList<T>(List<T> list)
@@ -176,6 +187,12 @@ namespace Zenject.Internal
         public static T[] SpawnArray<T>(int length)
         {
             return ArrayPool<T>.GetPool(length).Spawn();
+        }
+
+        // for use with 'using' statements
+        public static ArrayPool<T>.PooledArray Spawn<T>(out T[] array, int length)
+        {
+            return ArrayPool<T>.Spawn(out array, length);
         }
 
         public static InjectContext SpawnInjectContext(DiContainer container, Type memberType)
@@ -194,19 +211,6 @@ namespace Zenject.Internal
             _contextPool.Despawn(context);
         }
 
-        public readonly struct PooledObject<T> : IDisposable
-        {
-            private readonly ListPool<T> pool;
-            private readonly List<T> list;
-
-            public PooledObject(ListPool<T> pool, List<T> list)
-            {
-                this.pool = pool;
-                this.list = list;
-            }
-
-            public void Dispose() => pool.Despawn(list);
-        }
 #endif
 
         public static InjectContext SpawnInjectContext(
@@ -227,6 +231,5 @@ namespace Zenject.Internal
 
             return context;
         }
-
     }
 }

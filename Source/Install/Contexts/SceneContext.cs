@@ -258,7 +258,7 @@ namespace Zenject
             // so that it doesn't inject on the game object twice
             // InitialComponentsInjecter will also guarantee that any component that is injected into
             // another component has itself been injected
-            using (ZenPools.SpawnList<MonoBehaviour>(out var injectableMonoBehaviours))
+            using (ZenPools.Spawn(out List<MonoBehaviour> injectableMonoBehaviours))
             {
                 GetInjectableMonoBehaviours(injectableMonoBehaviours);
                 foreach (MonoBehaviour instance in injectableMonoBehaviours)

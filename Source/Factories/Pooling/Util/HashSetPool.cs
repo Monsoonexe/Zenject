@@ -1,4 +1,5 @@
 using ModestTree;
+using System;
 using System.Collections.Generic;
 
 namespace Zenject
@@ -13,6 +14,11 @@ namespace Zenject
             OnSpawnMethod = OnSpawned;
 #endif
             OnDespawnedMethod = OnDespawned;
+        }
+
+        public PooledItem Spawn(out HashSet<T> item)
+        {
+            return new PooledItem(this, item = Spawn());
         }
 
         public static HashSetPool<T> Instance
@@ -42,6 +48,20 @@ namespace Zenject
         private static void OnDespawned(HashSet<T> items)
         {
             items.Clear();
+        }
+
+        public readonly struct PooledItem : IDisposable
+        {
+            private readonly HashSetPool<T> pool;
+            private readonly HashSet<T> item;
+
+            public PooledItem(HashSetPool<T> pool, HashSet<T> item)
+            {
+                this.pool = pool;
+                this.item = item;
+            }
+
+            public void Dispose() => pool.Despawn(item);
         }
     }
 }

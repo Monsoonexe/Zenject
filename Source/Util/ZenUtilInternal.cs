@@ -127,7 +127,7 @@ namespace Zenject.Internal
             using (ProfileTimers.CreateTimedBlock("Searching Hierarchy"))
 #endif
             {
-                using (ZenPools.SpawnList<Animator>(out var animators))
+                using (ZenPools.Spawn(out List<Animator> animators))
                 {
                     root.GetComponentsInChildren(true, animators);
                     foreach (Animator animator in animators)
@@ -180,7 +180,7 @@ namespace Zenject.Internal
             }
 
             // hmmm - recursive allocation... too much?
-            using (ZenPools.SpawnList<MonoBehaviour>(out var monoBehaviours))
+            using (ZenPools.Spawn(out List<MonoBehaviour> monoBehaviours))
             {
                 gameObject.GetComponents(monoBehaviours);
                 int len = monoBehaviours.Count;
