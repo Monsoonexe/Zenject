@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: TestCompositeScriptableObjectDeepFooInstaller1
   m_EditorClassIdentifier: 
   _leafInstallers:
-  - {fileID: 11400000, guid: d2878aad2b9161942a0475b3c1c90664, type: 2}
+  - {fileID: 11400000, guid: 92ba30930b52d1a48b533ec7df8f43a2, type: 2}
