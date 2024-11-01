@@ -1,6 +1,7 @@
 using ModestTree;
 using System;
 using System.Collections.Generic;
+using Zenject.Internal;
 
 namespace Zenject
 {
@@ -8,7 +9,7 @@ namespace Zenject
     public class CachedProvider : IProvider
     {
         private readonly IProvider _creator;
-        private List<object> _instances;
+        private object[] _instances;
 
 #if ZEN_MULTITHREADING
         readonly object _locker = new object();
@@ -43,7 +44,7 @@ namespace Zenject
                 lock (_locker)
 #endif
                 {
-                    return _instances == null ? 0 : _instances.Count;
+                    return _instances == null ? 0 : _instances.Length;
                 }
             }
         }
@@ -95,14 +96,16 @@ namespace Zenject
                 _isCreatingInstance = true;
 #endif
 
-                var instances = new List<object>();
-                _creator.GetAllInstancesWithInjectSplit(context, args, out injectAction, instances);
+                using (ZenPools.Spawn(out List<object> instances))
+                {
+                    _creator.GetAllInstancesWithInjectSplit(context, args, out injectAction, instances);
+                    _instances = instances.ToArray();
+                }
 
-                _instances = instances;
 #if !ZEN_MULTITHREADING
                 _isCreatingInstance = false;
 #endif
-                buffer.AllocFreeAddRange(instances);
+                buffer.AllocFreeAddRange(_instances);
             }
         }
     }
