@@ -61,17 +61,7 @@ namespace Zenject.ReflectionBaking
 
         public static void TryForceUnityFullCompile()
         {
-            Type compInterface = typeof(UnityEditor.Editor).Assembly.GetType(
-                "UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface");
-
-            if (compInterface != null)
-            {
-                MethodInfo dirtyAllScriptsMethod = compInterface.GetMethod(
-                    "DirtyAllScripts", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-
-                dirtyAllScriptsMethod.Invoke(null, null);
-            }
-
+            UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
             UnityEditor.AssetDatabase.Refresh();
         }
     }

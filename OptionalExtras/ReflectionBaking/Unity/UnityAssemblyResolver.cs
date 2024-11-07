@@ -42,15 +42,7 @@ namespace Zenject.ReflectionBaking
 
         public override AssemblyDefinition Resolve(AssemblyNameReference name)
         {
-            AssemblyDefinition assemblyDef = FindAssemblyDefinition(name.FullName, null);
-
-            if (assemblyDef == null)
-            {
-                assemblyDef = base.Resolve(name);
-                _cache[name.FullName] = assemblyDef;
-            }
-
-            return assemblyDef;
+            return Resolve(name, null);
         }
 
         public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
