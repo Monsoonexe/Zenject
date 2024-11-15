@@ -630,14 +630,20 @@ namespace Zenject.ReflectionBaking
             {
                 instructions.Add(Instruction.Create(OpCodes.Ldnull));
             }
-            else if (identifier is string)
+            else if (identifier is string s)
             {
-                instructions.Add(Instruction.Create(OpCodes.Ldstr, (string)identifier));
+                instructions.Add(Instruction.Create(OpCodes.Ldstr, s));
             }
-            else if (identifier is int)
+            else if (identifier is int i)
             {
-                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)identifier));
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, i));
                 instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(int))));
+            }
+            else if (identifier is bool b)
+            {
+                OpCode defaultValue = b ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0;
+                instructions.Add(Instruction.Create(defaultValue));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(bool))));
             }
             else if (identifier.GetType().IsEnum)
             {
