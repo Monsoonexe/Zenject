@@ -15,11 +15,6 @@ namespace Zenject
             get { return _container; }
         }
 
-        bool IInstaller.IsEnabled
-        {
-            get { return true; }
-        }
-
         public abstract void InstallBindings();
     }
 }

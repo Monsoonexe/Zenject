@@ -5,9 +5,7 @@ using Zenject.Internal;
 
 namespace Zenject
 {
-    // We'd prefer to make this abstract but Unity 5.3.5 has a bug where references
-    // can get lost during compile errors for classes that are abstract
-    public class MonoInstaller : MonoInstallerBase
+    public abstract class MonoInstaller : MonoInstallerBase
     {
     }
 
@@ -21,7 +19,7 @@ namespace Zenject
     //
     // This approach is needed if you want to pass in strongly parameters to it from
     // another installer
-    public class MonoInstaller<TDerived> : MonoInstaller
+    public abstract class MonoInstaller<TDerived> : MonoInstaller
         where TDerived : MonoInstaller<TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container)
@@ -48,7 +46,7 @@ namespace Zenject
         }
     }
 
-    public class MonoInstaller<TParam1, TDerived> : MonoInstallerBase
+    public abstract class MonoInstaller<TParam1, TDerived> : MonoInstallerBase
         where TDerived : MonoInstaller<TParam1, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1)
@@ -65,7 +63,7 @@ namespace Zenject
         }
     }
 
-    public class MonoInstaller<TParam1, TParam2, TDerived> : MonoInstallerBase
+    public abstract class MonoInstaller<TParam1, TParam2, TDerived> : MonoInstallerBase
         where TDerived : MonoInstaller<TParam1, TParam2, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2)
@@ -82,7 +80,7 @@ namespace Zenject
         }
     }
 
-    public class MonoInstaller<TParam1, TParam2, TParam3, TDerived> : MonoInstallerBase
+    public abstract class MonoInstaller<TParam1, TParam2, TParam3, TDerived> : MonoInstallerBase
         where TDerived : MonoInstaller<TParam1, TParam2, TParam3, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3)
@@ -99,7 +97,7 @@ namespace Zenject
         }
     }
 
-    public class MonoInstaller<TParam1, TParam2, TParam3, TParam4, TDerived> : MonoInstallerBase
+    public abstract class MonoInstaller<TParam1, TParam2, TParam3, TParam4, TDerived> : MonoInstallerBase
         where TDerived : MonoInstaller<TParam1, TParam2, TParam3, TParam4, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4)
@@ -116,7 +114,7 @@ namespace Zenject
         }
     }
 
-    public class MonoInstaller<TParam1, TParam2, TParam3, TParam4, TParam5, TDerived> : MonoInstallerBase
+    public abstract class MonoInstaller<TParam1, TParam2, TParam3, TParam4, TParam5, TDerived> : MonoInstallerBase
         where TDerived : MonoInstaller<TParam1, TParam2, TParam3, TParam4, TParam5, TDerived>
     {
         public static TDerived InstallFromResource(DiContainer container, TParam1 p1, TParam2 p2, TParam3 p3, TParam4 p4, TParam5 p5)
