@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Text;
 
 namespace Zenject.Internal
 {
@@ -94,6 +94,8 @@ namespace Zenject.Internal
         private static readonly StaticMemoryPool<LookupId> _lookupIdPool = new StaticMemoryPool<LookupId>();
         private static readonly StaticMemoryPool<BindInfo> _bindInfoPool = new StaticMemoryPool<BindInfo>();
         private static readonly StaticMemoryPool<BindStatement> _bindStatementPool = new StaticMemoryPool<BindStatement>();
+        public static readonly StaticMemoryPool<StringBuilder> StringBuilder = new StaticMemoryPool<StringBuilder>(
+            onDespawnedMethod: (item) => item.Clear());
 
         public static HashSet<T> SpawnHashSet<T>()
         {
