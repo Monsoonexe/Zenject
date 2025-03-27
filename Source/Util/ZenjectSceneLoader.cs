@@ -54,11 +54,11 @@ namespace Zenject
         }
 
         public AsyncOperation LoadSceneAsync(
-        string sceneName,
-        LoadSceneMode loadMode = LoadSceneMode.Single,
-        Action<DiContainer> extraBindings = null,
-        LoadSceneRelationship containerMode = LoadSceneRelationship.None,
-        Action<DiContainer> extraBindingsLate = null)
+            string sceneName,
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            Action<DiContainer> extraBindings = null,
+            LoadSceneRelationship containerMode = LoadSceneRelationship.None,
+            Action<DiContainer> extraBindingsLate = null)
         {
             PrepareForLoadScene(loadMode, extraBindings, extraBindingsLate, containerMode);
 
