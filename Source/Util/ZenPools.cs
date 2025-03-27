@@ -97,6 +97,11 @@ namespace Zenject.Internal
         public static readonly StaticMemoryPool<StringBuilder> StringBuilder = new StaticMemoryPool<StringBuilder>(
             onDespawnedMethod: (item) => item.Clear());
 
+        public static PooledItem Spawn(out StringBuilder stringBuilder)
+        {
+            return new PooledItem(StringBuilder, stringBuilder = StringBuilder.Spawn());
+        }
+
         public static HashSet<T> SpawnHashSet<T>()
         {
             return HashSetPool<T>.Instance.Spawn();
@@ -232,6 +237,21 @@ namespace Zenject.Internal
             context.ConcreteIdentifier = concreteIdentifier;
 
             return context;
+        }
+
+
+        public readonly struct PooledItem : IDisposable
+        {
+            private readonly StaticMemoryPool<StringBuilder> pool;
+            private readonly StringBuilder item;
+
+            public PooledItem(StaticMemoryPool<StringBuilder> pool, StringBuilder item)
+            {
+                this.pool = pool;
+                this.item = item;
+            }
+
+            public void Dispose() => pool.Despawn(item);
         }
     }
 }
