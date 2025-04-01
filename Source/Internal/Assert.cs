@@ -87,6 +87,15 @@ namespace ModestTree
 #if ZEN_STRIP_ASSERTS_IN_BUILDS
         [Conditional("UNITY_EDITOR")]
 #endif
+        public static void Fail(string message = null)
+        {
+            message = message ?? "Assert Hit!";
+            throw CreateException(message);
+        }
+
+#if ZEN_STRIP_ASSERTS_IN_BUILDS
+        [Conditional("UNITY_EDITOR")]
+#endif
         public static void DerivesFromOrEqual<T>(Type type)
         {
             if (!type.DerivesFromOrEqual<T>())
