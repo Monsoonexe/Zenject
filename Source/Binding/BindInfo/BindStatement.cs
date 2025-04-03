@@ -78,7 +78,7 @@ namespace Zenject
 
         public void Dispose()
         {
-            ZenPools.DespawnStatement(this);
+            ZenPools.Despawn(this);
         }
     }
 }

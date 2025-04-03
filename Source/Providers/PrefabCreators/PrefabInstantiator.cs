@@ -93,7 +93,7 @@ namespace Zenject
                     Assert.That(allArgs.Count == 0);
                 }
 
-                ZenPools.DespawnList(allArgs);
+                ZenPools.Despawn(allArgs);
 
                 if (shouldMakeActive && !_container.IsValidating)
                 {

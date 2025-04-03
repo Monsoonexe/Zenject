@@ -105,7 +105,7 @@ namespace Zenject
                 _container.InjectExplicit(instance, _componentType, extraArgs, context, _concreteIdentifier);
 
                 Assert.That(extraArgs.IsEmpty());
-                ZenPools.DespawnList(extraArgs);
+                ZenPools.Despawn(extraArgs);
 
                 if (_instantiateCallback != null)
                 {

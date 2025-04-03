@@ -51,7 +51,7 @@ namespace Zenject
             var installer = (InstallerBase)subContainer.InstantiateExplicit(
                 _installerType, extraArgs);
 
-            ZenPools.DespawnList(extraArgs);
+            ZenPools.Despawn(extraArgs);
 
             installer.InstallBindings();
 

@@ -48,7 +48,7 @@ namespace Zenject
 
         public void Dispose()
         {
-            ZenPools.DespawnInjectContext(this);
+            ZenPools.Despawn(this);
         }
 
         public void Reset()

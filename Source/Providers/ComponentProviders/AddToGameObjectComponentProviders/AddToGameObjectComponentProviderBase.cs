@@ -105,7 +105,7 @@ namespace Zenject
 
                     Assert.That(extraArgs.Count == 0);
 
-                    ZenPools.DespawnList(extraArgs);
+                    ZenPools.Despawn(extraArgs);
 
                     if (_instantiateCallback != null)
                     {

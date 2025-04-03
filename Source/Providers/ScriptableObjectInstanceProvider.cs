@@ -80,7 +80,7 @@ namespace Zenject
                     _container.InjectExplicit(
                         obj, _resourceType, extraArgs, context, _concreteIdentifier);
 
-                    ZenPools.DespawnList(extraArgs);
+                    ZenPools.Despawn(extraArgs);
 
                     if (_instantiateCallback != null)
                     {

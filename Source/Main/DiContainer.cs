@@ -605,7 +605,7 @@ namespace Zenject
             }
             finally
             {
-                ZenPools.DespawnList(localProviders);
+                ZenPools.Despawn(localProviders);
             }
         }
 
@@ -693,7 +693,7 @@ namespace Zenject
             }
             finally
             {
-                ZenPools.DespawnList(buffer);
+                ZenPools.Despawn(buffer);
             }
         }
 
@@ -891,7 +891,7 @@ namespace Zenject
             }
             finally
             {
-                ZenPools.DespawnList(matches);
+                ZenPools.Despawn(matches);
             }
         }
 
@@ -959,7 +959,7 @@ namespace Zenject
                         }
                         finally
                         {
-                            ZenPools.DespawnList(results);
+                            ZenPools.Despawn(results);
                         }
                     }
 
@@ -1017,7 +1017,7 @@ namespace Zenject
                 }
                 finally
                 {
-                    ZenPools.DespawnList(instances);
+                    ZenPools.Despawn(instances);
                 }
             }
         }
@@ -1079,7 +1079,7 @@ namespace Zenject
                 }
                 finally
                 {
-                    ZenPools.DespawnLookupId(lookupId);
+                    ZenPools.Despawn(lookupId);
                 }
             }
             else
@@ -1430,7 +1430,7 @@ namespace Zenject
                 }
                 finally
                 {
-                    ZenPools.DespawnArray(paramValues);
+                    ZenPools.Despawn(paramValues);
                 }
             }
         }
@@ -2506,7 +2506,7 @@ namespace Zenject
             }
             finally
             {
-                ZenPools.DespawnList(matches);
+                ZenPools.Despawn(matches);
             }
         }
 

@@ -66,7 +66,7 @@ namespace Zenject
 
         public void Dispose()
         {
-            ZenPools.DespawnBindInfo(this);
+            ZenPools.Despawn(this);
         }
 
         [Conditional("UNITY_EDITOR")]

@@ -67,7 +67,7 @@ namespace Zenject
                     instance, instanceType, extraArgs, context, _concreteIdentifier);
 
                 Assert.That(extraArgs.Count == 0);
-                ZenPools.DespawnList(extraArgs);
+                ZenPools.Despawn(extraArgs);
 
                 if (_instantiateCallback != null)
                 {
