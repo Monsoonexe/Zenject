@@ -9,7 +9,11 @@ namespace Zenject
     {
     }
 
-    // Placeholder factories can be used to choose a creation method in an installer, using FactoryBinder
+    /// <summary>
+    /// Definition of a factory, not the actual factory.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <remarks>Placeholder factories can be used to choose a creation method in an installer, using FactoryBinder</remarks>
     public abstract class PlaceholderFactoryBase<TValue> : IPlaceholderFactory
     {
         private IProvider _provider;
