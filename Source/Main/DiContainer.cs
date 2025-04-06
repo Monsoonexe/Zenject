@@ -2606,7 +2606,7 @@ namespace Zenject
             BindInfo bindInfo = bindStatement.SpawnBindInfo();
 
             Assert.That(!typeof(TContract).DerivesFrom<IPlaceholderFactory>(),
-                "You should not use Container.Bind for factory classes.  Use Container.BindFactory instead.");
+                $"You should not use Container.Bind for factory class '{typeof(TContract).FullName}'.  Use Container.BindFactory instead.");
 
             Assert.That(!bindInfo.ContractTypes.Contains(typeof(TContract)));
             bindInfo.ContractTypes.Add(typeof(TContract));
