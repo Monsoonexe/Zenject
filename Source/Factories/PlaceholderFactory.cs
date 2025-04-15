@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 #if !NOT_UNITY3D
 using JetBrains.Annotations;
+using Zenject.Internal;
 #endif
 
 namespace Zenject
@@ -25,11 +26,6 @@ namespace Zenject
         }
     }
 
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TValue> : PlaceholderFactory<TValue>
-    {
-    }
-
     // One parameter
     public class PlaceholderFactory<TParam1, TValue>
         : PlaceholderFactoryBase<TValue>, IFactory<TParam1, TValue>
@@ -41,22 +37,17 @@ namespace Zenject
 #endif
         public virtual TValue Create(TParam1 param)
         {
-            return CreateInternal(
-                new List<TypeValuePair>
-                {
-                    InjectUtil.CreateTypePair(param)
-                });
+            using (ZenPools.Spawn(out List<TypeValuePair> args))
+            {
+                args.Add(InjectUtil.CreateTypePair(param));
+                return CreateInternal(args);
+            }
         }
 
         protected sealed override IEnumerable<Type> ParamTypes
         {
             get { yield return typeof(TParam1); }
         }
-    }
-
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TValue> : PlaceholderFactory<TParam1, TValue>
-    {
     }
 
     // Two parameters
@@ -70,12 +61,12 @@ namespace Zenject
 #endif
         public virtual TValue Create(TParam1 param1, TParam2 param2)
         {
-            return CreateInternal(
-                new List<TypeValuePair>
-                {
-                    InjectUtil.CreateTypePair(param1),
-                    InjectUtil.CreateTypePair(param2)
-                });
+            using (ZenPools.Spawn(out List<TypeValuePair> args))
+            {
+                args.Add(InjectUtil.CreateTypePair(param1));
+                args.Add(InjectUtil.CreateTypePair(param2));
+                return CreateInternal(args);
+            }
         }
 
         protected sealed override IEnumerable<Type> ParamTypes
@@ -88,10 +79,6 @@ namespace Zenject
         }
     }
 
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TValue> : PlaceholderFactory<TParam1, TParam2, TValue>
-    {
-    }
 
     // Three parameters
     public class PlaceholderFactory<TParam1, TParam2, TParam3, TValue>
@@ -104,13 +91,13 @@ namespace Zenject
 #endif
         public virtual TValue Create(TParam1 param1, TParam2 param2, TParam3 param3)
         {
-            return CreateInternal(
-                new List<TypeValuePair>
-                {
-                    InjectUtil.CreateTypePair(param1),
-                    InjectUtil.CreateTypePair(param2),
-                    InjectUtil.CreateTypePair(param3)
-                });
+            using (ZenPools.Spawn(out List<TypeValuePair> args))
+            {
+                args.Add(InjectUtil.CreateTypePair(param1));
+                args.Add(InjectUtil.CreateTypePair(param2));
+                args.Add(InjectUtil.CreateTypePair(param3));
+                return CreateInternal(args);
+            }
         }
 
         protected sealed override IEnumerable<Type> ParamTypes
@@ -122,11 +109,6 @@ namespace Zenject
                 yield return typeof(TParam3);
             }
         }
-    }
-
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TParam3, TValue> : PlaceholderFactory<TParam1, TParam2, TParam3, TValue>
-    {
     }
 
     // Four parameters
@@ -160,12 +142,6 @@ namespace Zenject
                 yield return typeof(TParam4);
             }
         }
-    }
-
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TParam3, TParam4, TValue>
-        : PlaceholderFactory<TParam1, TParam2, TParam3, TParam4, TValue>
-    {
     }
 
     // Five parameters
@@ -203,12 +179,6 @@ namespace Zenject
         }
     }
 
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
-        : PlaceholderFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
-    {
-    }
-
     // Six parameters
     public class PlaceholderFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
         : PlaceholderFactoryBase<TValue>, IFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
@@ -244,12 +214,6 @@ namespace Zenject
                 yield return typeof(TParam6);
             }
         }
-    }
-
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
-        : PlaceholderFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
-    {
     }
 
     // Ten parameters
@@ -291,12 +255,6 @@ namespace Zenject
                 yield return typeof(TParam10);
             }
         }
-    }
-
-    [Obsolete("Zenject.Factory has been renamed to PlaceholderFactory.  Zenject.Factory will be removed in future versions")]
-    public class Factory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10, TValue>
-        : PlaceholderFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TParam9, TParam10, TValue>
-    {
     }
 }
 
