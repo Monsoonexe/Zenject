@@ -37,12 +37,19 @@ namespace Zenject
                 }
                 else
                 {
+                    if (!ctx.Optional && obj == null)
+                    {
+                        throw Assert.CreateException("OnInstantiated called on non-optional, null instance. Expected an instance of type {0}", typeof(T));
+                    }
+
                     Assert.That(obj == null || obj is T,
-                        "Invalid generic argument to OnInstantiated! {0} must be type {1}", obj.GetType(), typeof(T));
+                        "Invalid generic argument to OnInstantiated! {0} must be type {1}",
+                        obj?.GetType().ToString() ?? "-null-", typeof(T));
 
                     callback(ctx, (T)obj);
                 }
             };
+
             return this;
         }
     }
