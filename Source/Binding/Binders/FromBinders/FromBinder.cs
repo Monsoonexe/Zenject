@@ -755,7 +755,7 @@ namespace Zenject
                         if (match == null)
                         {
                             Assert.That(ctx.Optional,
-                                "Could not find any component with type '{0}' through FromComponentInHierarchy binding", concreteType);
+                                "Could not find any component with type '{0}' through FromComponentInHierarchy binding while injecting type {1}", concreteType, ctx.ObjectType.Name);
                             return Enumerable.Empty<object>();
                         }
 
