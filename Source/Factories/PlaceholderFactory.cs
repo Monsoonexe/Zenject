@@ -17,7 +17,10 @@ namespace Zenject
 #endif
         public virtual TValue Create()
         {
-            return CreateInternal(new List<TypeValuePair>());
+            using (ZenPools.Spawn(out List<TypeValuePair> args))
+            {
+                return CreateInternal(args);
+            }
         }
 
         protected sealed override IEnumerable<Type> ParamTypes
