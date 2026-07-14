@@ -645,9 +645,68 @@ namespace Zenject.ReflectionBaking
                 instructions.Add(Instruction.Create(defaultValue));
                 instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(bool))));
             }
+            else if (identifier is float f)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_R4, f));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(float))));
+            }
+            else if (identifier is double d)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_R8, d));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(double))));
+            }
+            else if (identifier is long l)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I8, l));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(long))));
+            }
+            else if (identifier is ulong ul)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I8, unchecked((long)ul)));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(ulong))));
+            }
+            else if (identifier is uint ui)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, unchecked((int)ui)));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(uint))));
+            }
+            else if (identifier is short sh)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)sh));
+                instructions.Add(Instruction.Create(OpCodes.Conv_I2));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(short))));
+            }
+            else if (identifier is ushort ush)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)ush));
+                instructions.Add(Instruction.Create(OpCodes.Conv_U2));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(ushort))));
+            }
+            else if (identifier is byte by)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)by));
+                instructions.Add(Instruction.Create(OpCodes.Conv_U1));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(byte))));
+            }
+            else if (identifier is char c)
+            {
+                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)c));
+                instructions.Add(Instruction.Create(OpCodes.Conv_U2));
+                instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(typeof(char))));
+            }
             else if (identifier.GetType().IsEnum)
             {
-                instructions.Add(Instruction.Create(OpCodes.Ldc_I4, (int)identifier));
+                Type underlyingType = Enum.GetUnderlyingType(identifier.GetType());
+
+                if (underlyingType == typeof(long) || underlyingType == typeof(ulong))
+                {
+                    instructions.Add(Instruction.Create(OpCodes.Ldc_I8, Convert.ToInt64(identifier)));
+                }
+                else
+                {
+                    instructions.Add(Instruction.Create(OpCodes.Ldc_I4, Convert.ToInt32(identifier)));
+                }
+
                 instructions.Add(Instruction.Create(OpCodes.Box, _module.Import(identifier.GetType())));
             }
             else
