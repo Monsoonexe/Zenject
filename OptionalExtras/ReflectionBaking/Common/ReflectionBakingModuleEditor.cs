@@ -286,7 +286,7 @@ namespace Zenject.ReflectionBaking
             MethodReference actualMethodDef;
 
             if (!TryFindLocalMethod(
-                genericTypeDef, postInjectInfo.MethodInfo.Name, out declaringTypeDef, out actualMethodDef))
+                genericTypeDef, postInjectInfo.MethodInfo, out declaringTypeDef, out actualMethodDef))
             {
                 throw Assert.CreateException();
             }
@@ -602,12 +602,12 @@ namespace Zenject.ReflectionBaking
         }
 
         private bool TryFindLocalMethod(
-            TypeReference specificTypeRef, string methodName, out TypeReference declaringTypeRef, out MethodReference methodRef)
+            TypeReference specificTypeRef, MethodInfo actualMethodInfo, out TypeReference declaringTypeRef, out MethodReference methodRef)
         {
             foreach (TypeReference typeRef in specificTypeRef.GetSpecificBaseTypesAndSelf())
             {
                 MethodDefinition candidateMethodDef = typeRef.Resolve().Methods
-                    .Where(x => x.Name == methodName).SingleOrDefault();
+                    .Where(x => MethodMatchesSignature(x, actualMethodInfo)).SingleOrDefault();
 
                 if (candidateMethodDef != null)
                 {
@@ -620,6 +620,81 @@ namespace Zenject.ReflectionBaking
             declaringTypeRef = null;
             methodRef = null;
             return false;
+        }
+
+        private bool MethodMatchesSignature(MethodDefinition candidateMethodDef, MethodInfo actualMethodInfo)
+        {
+            if (candidateMethodDef.Name != actualMethodInfo.Name)
+            {
+                return false;
+            }
+
+            Collection<ParameterDefinition> candidateParams = candidateMethodDef.Parameters;
+            ParameterInfo[] actualParams = actualMethodInfo.GetParameters();
+
+            if (candidateParams.Count != actualParams.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < candidateParams.Count; i++)
+            {
+                if (!ParameterTypeMatches(candidateParams[i].ParameterType, actualParams[i].ParameterType))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool ParameterTypeMatches(TypeReference cecilType, Type reflectionType)
+        {
+            if (reflectionType.IsGenericParameter)
+            {
+                return cecilType.IsGenericParameter && cecilType.Name == reflectionType.Name;
+            }
+
+            if (cecilType.IsGenericParameter)
+            {
+                return false;
+            }
+
+            if (reflectionType.IsArray)
+            {
+                return cecilType.IsArray
+                    && ParameterTypeMatches(cecilType.GetElementType(), reflectionType.GetElementType());
+            }
+
+            if (reflectionType.IsGenericType)
+            {
+                if (!cecilType.IsGenericInstance)
+                {
+                    return false;
+                }
+
+                var cecilGenericType = (GenericInstanceType)cecilType;
+                Type[] reflectionGenericArgs = reflectionType.GetGenericArguments();
+
+                if (cecilGenericType.GenericArguments.Count != reflectionGenericArgs.Length
+                    || cecilGenericType.GetElementType().FullName != reflectionType.GetGenericTypeDefinition().FullName.Replace('+', '/'))
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < reflectionGenericArgs.Length; i++)
+                {
+                    if (!ParameterTypeMatches(cecilGenericType.GenericArguments[i], reflectionGenericArgs[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            // Cecil uses '/' to separate nested types where System.Reflection uses '+'
+            return cecilType.FullName == reflectionType.FullName.Replace('+', '/');
         }
 
         private void AddObjectInstructions(
