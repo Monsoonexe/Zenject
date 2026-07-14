@@ -260,12 +260,12 @@ namespace Zenject.ReflectionBaking
         public static IEnumerable<TypeReference> GetSpecificBaseTypesAndSelf(
             this TypeReference specificTypeRef)
         {
+            yield return specificTypeRef;
+
             foreach (TypeReference ancestor in specificTypeRef.GetSpecificBaseTypes())
             {
                 yield return ancestor;
             }
-
-            yield return specificTypeRef;
         }
 
         public static IEnumerable<TypeReference> GetSpecificBaseTypes(
