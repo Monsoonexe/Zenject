@@ -530,8 +530,7 @@ namespace Zenject.ReflectionBaking
                 instructions.Add(Instruction.Create(OpCodes.Ldc_I4, i));
 
                 AddInjectableMemberInstructions(
-                    instructions,
-                    injectField.InjectableInfo, injectField.FieldInfo.Name,
+                    instructions, injectField.InjectableInfo,
                     typeDef, genericTypeDef, fieldSetMethods[i]);
 
                 instructions.Add(Instruction.Create(OpCodes.Stelem_Ref));
@@ -545,9 +544,8 @@ namespace Zenject.ReflectionBaking
                 instructions.Add(Instruction.Create(OpCodes.Ldc_I4, fieldSetMethods.Count + i));
 
                 AddInjectableMemberInstructions(
-                    instructions,
-                    injectProperty.InjectableInfo,
-                    injectProperty.PropertyInfo.Name, typeDef, genericTypeDef,
+                    instructions, injectProperty.InjectableInfo,
+                    typeDef, genericTypeDef,
                     propertySetMethods[i]);
 
                 instructions.Add(Instruction.Create(OpCodes.Stelem_Ref));
@@ -825,8 +823,9 @@ namespace Zenject.ReflectionBaking
 
         private void AddInjectableMemberInstructions(
             List<Instruction> instructions,
-            InjectableInfo injectableInfo, string name,
-            TypeDefinition typeDef, TypeReference genericTypeDef,
+            InjectableInfo injectableInfo,
+            TypeDefinition typeDef,
+            TypeReference genericTypeDef,
             MethodDefinition methodDef)
         {
             instructions.Add(Instruction.Create(OpCodes.Ldnull));
