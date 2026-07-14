@@ -180,7 +180,7 @@ namespace Zenject.ReflectionBaking
             }
             else if (type.IsEnum)
             {
-                processor.Emit(OpCodes.Unbox_Any, _module.TypeSystem.Int32);
+                processor.Emit(OpCodes.Unbox_Any, _module.ImportType(type));
             }
             else if (type.IsValueType)
             {
