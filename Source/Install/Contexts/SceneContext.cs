@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject.Internal;
 using UnityEngine.Events;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -32,6 +31,14 @@ namespace Zenject
         public static Action<DiContainer> ExtraBindingsLateInstallMethod;
 
         public static IEnumerable<DiContainer> ParentContainers;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            ExtraBindingsInstallMethod = null;
+            ParentContainers = null;
+            ExtraBindingsLateInstallMethod = null;
+        }
 
         [FormerlySerializedAs("ParentNewObjectsUnderRoot")]
         [FormerlySerializedAs("_parentNewObjectsUnderRoot")]
@@ -103,21 +110,6 @@ namespace Zenject
             set { _parentNewObjectsUnderSceneContext = value; }
         }
 
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticValues()
-        {
-            if (!EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-
-            ExtraBindingsInstallMethod = null;
-            ParentContainers = null;
-            ExtraBindingsLateInstallMethod = null;
-        }
-#endif
         protected override void Awake()
         {
             base.Awake();

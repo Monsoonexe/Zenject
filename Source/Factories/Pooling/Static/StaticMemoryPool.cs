@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Zenject
 {
     [NoReflectionBaking]
-    public abstract class StaticMemoryPoolBaseBase<TValue> : IDespawnableMemoryPool<TValue>, IDisposable
+    public abstract class StaticMemoryPoolBaseBase<TValue> : IDespawnableMemoryPool<TValue>, IDisposable, IResettableStaticMemoryPool
         where TValue : class
     {
         // I also tried using ConcurrentBag instead of Stack + lock here but that performed much much worse
@@ -20,10 +20,7 @@ namespace Zenject
         public StaticMemoryPoolBaseBase(Action<TValue> onDespawnedMethod)
         {
             _onDespawnedMethod = onDespawnedMethod;
-
-#if UNITY_EDITOR
             StaticMemoryPoolRegistry.Add(this);
-#endif
         }
 
         public Action<TValue> OnDespawnedMethod
@@ -97,9 +94,7 @@ namespace Zenject
 
         public void Dispose()
         {
-#if UNITY_EDITOR
             StaticMemoryPoolRegistry.Remove(this);
-#endif
         }
 
         public void ClearActiveCount()
@@ -115,6 +110,17 @@ namespace Zenject
         public void Clear()
         {
             Resize(0);
+        }
+
+        public void ResetPool()
+        {
+#if ZEN_MULTITHREADING
+            lock (_locker)
+#endif
+            {
+                _stack.Clear();
+                _activeCount = 0;
+            }
         }
 
         public void ShrinkBy(int numToRemove)

@@ -1,6 +1,9 @@
 using ModestTree;
 using System;
 using System.Collections.Generic;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 
 namespace Zenject
 {
@@ -26,20 +29,6 @@ namespace Zenject
             get { return _instance; }
         }
 
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticValues()
-        {
-            if (!UnityEditor.EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-
-            _instance.Clear();
-        }
-#endif
-
         private static void OnSpawned(HashSet<T> items)
         {
             Assert.That(items.IsEmpty());
@@ -64,4 +53,15 @@ namespace Zenject
             public void Dispose() => pool.Despawn(item);
         }
     }
+
+#if !NOT_UNITY3D
+    internal static class HashSetPoolRuntimeState
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            StaticMemoryPoolRegistry.Reset();
+        }
+    }
+#endif
 }

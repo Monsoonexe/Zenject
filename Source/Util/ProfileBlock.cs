@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ModestTree;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 #if UNITY_EDITOR
 using UnityEngine.Profiling;
 using System.Threading;
@@ -19,20 +22,6 @@ namespace Zenject
 
         private ProfileBlock()
         {
-        }
-
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticValues()
-        {
-            if (!UnityEditor.EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-
-            _instance = new ProfileBlock();
-            _nameCache.Clear();
-            _blockCount = 0;
         }
 
         public static Thread UnityMainThread
@@ -210,6 +199,20 @@ namespace Zenject
 
         public void Dispose()
         {
+        }
+#endif
+
+#if !NOT_UNITY3D
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+#if UNITY_EDITOR
+            _blockCount = 0;
+            _instance = new ProfileBlock();
+            _nameCache.Clear();
+            UnityMainThread = null;
+#endif
+            ProfilePattern = null;
         }
 #endif
     }

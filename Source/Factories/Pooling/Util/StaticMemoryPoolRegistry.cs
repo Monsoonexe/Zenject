@@ -1,10 +1,17 @@
 using ModestTree;
 using System;
 using System.Collections.Generic;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 
 namespace Zenject
 {
-#if UNITY_EDITOR
+    internal interface IResettableStaticMemoryPool
+    {
+        void ResetPool();
+    }
+
     public static class StaticMemoryPoolRegistry
     {
         public static event Action<IMemoryPool> PoolAdded = delegate { };
@@ -28,6 +35,31 @@ namespace Zenject
             _pools.RemoveWithConfirm(memoryPool);
             PoolRemoved(memoryPool);
         }
-    }
+
+        public static void Reset()
+        {
+            for (int i = _pools.Count - 1; i >= 0; i--)
+            {
+                var pool = _pools[i] as IResettableStaticMemoryPool;
+
+                if (pool == null)
+                {
+                    _pools.RemoveAt(i);
+                    continue;
+                }
+
+                pool.ResetPool();
+            }
+        }
+
+#if !NOT_UNITY3D
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            Reset();
+            PoolAdded = delegate { };
+            PoolRemoved = delegate { };
+        }
 #endif
+    }
 }
