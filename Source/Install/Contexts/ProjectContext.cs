@@ -19,6 +19,17 @@ namespace Zenject
         public const string ProjectContextResourcePath = "ProjectContext";
         private static ProjectContext _instance;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            PreInstall = null;
+            PostInstall = null;
+            PreResolve = null;
+            PostResolve = null;
+            _instance = null;
+            ValidateOnNextRun = false;
+        }
+
         // TODO: Set this to false the next time major version is incremented
         [Tooltip("When true, objects that are created at runtime will be parented to the ProjectContext")]
         [SerializeField]
@@ -157,24 +168,6 @@ namespace Zenject
                 }
             }
         }
-
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticValues()
-        {
-            if (!UnityEditor.EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-
-            PreInstall = null;
-            PostInstall = null;
-            PreResolve = null;
-            PostResolve = null;
-            _instance = null;
-        }
-#endif
 
         public bool ParentNewObjectsUnderContext
         {
